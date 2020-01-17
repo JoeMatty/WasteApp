@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/Waste-Home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Add Waste amount</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-item>
+    <ion-label position ="stacked">Input your waste amount:</ion-label>
+    <ion-input required type="text"></ion-input>
+    
+ </ion-item>
+
+ <ion-button (click)="openPage()" expand="block">Submit</ion-button>
+
+</ion-content>
