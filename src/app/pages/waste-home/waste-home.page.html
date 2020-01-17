@@ -1,9 +1,25 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Check your waste!</ion-title>
+    <ion-title>View your Waste</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
- 
+<ion-content class = "ion-padding">
+
+  <ion-item>
+    <ion-label class="ion-text-wrap">This progress bar shows your current waste amount.</ion-label>
+  </ion-item>
+  <ion-row>
+    
+    <ion-col size="2" ion-col class="ion-align-self-center">
+      <ion-note>30%</ion-note>
+    </ion-col>
+    <ion-col size="10" ion-col class="ion-align-self-center">
+      <ion-progress-bar color="primary" value="0.3"></ion-progress-bar>
+    </ion-col>
+  
+  </ion-row>  
+  
+  <ion-button (click)="openPage()" expand="block">Manually add waste</ion-button>
+
 </ion-content>

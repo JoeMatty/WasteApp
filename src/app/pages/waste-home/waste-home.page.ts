@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-waste-home',
@@ -6,10 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./waste-home.page.scss'],
 })
 export class WasteHomePage implements OnInit {
-
-  constructor() { }
+  myString = "beep";
+  constructor(private router: Router) { 
+    
+  }
 
   ngOnInit() {
+  }
+
+  openPage(){
+    this.myString = "boop";
+    this.router.navigateByUrl('/tabs/Add-manual');
   }
 
 }

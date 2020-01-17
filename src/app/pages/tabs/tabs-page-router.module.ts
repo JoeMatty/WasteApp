@@ -25,7 +25,17 @@ const routes: Routes = [
             loadChildren: () => import('../settings/settings.module').then( m => m.SettingsPageModule)
           }
         ]
+      },
+      {
+        path: 'Add-manual',
+        children: [
+          {
+            path: '',
+            loadChildren: () => import('../add-manual/add-manual.module').then( m => m.AddManualPageModule)
+          }
+        ]
       }
+        
     ]
   },
   {
