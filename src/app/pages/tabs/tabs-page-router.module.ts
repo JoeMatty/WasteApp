@@ -27,7 +27,7 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'Add-manual',
+        path: 'Add-Manual',
         children: [
           {
             path: '',

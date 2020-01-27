@@ -1,15 +1,15 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>View your Waste</ion-title>
+<ion-header >
+  <ion-toolbar color="primary">
+    <ion-title >View your Waste</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class = "ion-padding">
 
   <ion-item>
-    <ion-label class="ion-text-wrap">This progress bar shows your current waste amount.</ion-label>
+    <ion-label class="ion-text-wrap">This progress bar shows your current waste amount. total: {{ wasteTotal }}</ion-label>
   </ion-item>
-  <ion-row>
+  <ion-row class = "ion-padding">
     
     <ion-col size="2" ion-col class="ion-align-self-center">
       <ion-note>30%</ion-note>
@@ -17,9 +17,23 @@
     <ion-col size="10" ion-col class="ion-align-self-center">
       <ion-progress-bar color="primary" value="0.3"></ion-progress-bar>
     </ion-col>
-  
+    <ion-button (click) = "update()">check</ion-button>
   </ion-row>  
-  
-  <ion-button (click)="openPage()" expand="block">Manually add waste</ion-button>
+
+  <ion-fab horizontal="center" vertical="bottom" slot="fixed">
+    <ion-fab-button >
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button >
+        <ion-icon name="trash" routerLink="/tabs/Add-Manual" routerDirection="forward"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
 
 </ion-content>
+<ion-footer>
+
+
+
+</ion-footer>

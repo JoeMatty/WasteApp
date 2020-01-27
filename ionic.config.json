@@ -1,5 +1,7 @@
 {
   "name": "wasteFootprint",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

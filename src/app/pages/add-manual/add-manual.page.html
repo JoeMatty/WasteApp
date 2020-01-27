@@ -7,14 +7,49 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<div *ngIf = "!name; else forminfo"></div>
 
-  <ion-item>
-    <ion-label position ="stacked">Input your waste amount:</ion-label>
-    <ion-input required type="text"></ion-input>
-    
- </ion-item>
+  <ion-content>
+    <div class="add-box">
+      <form [formGroup]="quickAdd" (ngSubmit)="processForm()"> 
 
- <ion-button (click)="openPage()" expand="block">Submit</ion-button>
+        <ion-list lines="full" class="ion-no-margin ion-no-padding">
 
-</ion-content>
+          <ion-item>
+            <ion-label position="stacked">Waste Name <ion-text color="danger">*</ion-text> </ion-label>
+            <ion-input  type="text" formControlName="wasteName" ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Waste Type <ion-text color="danger">*</ion-text> </ion-label>
+            <ion-input  type="text" formControlName="wasteType" ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Amount of waste <ion-text color="danger">*</ion-text> </ion-label>
+            <ion-input type="number" formControlName="wasteAmount"></ion-input>
+          </ion-item>
+
+        </ion-list>
+  
+        <div class="ion-padding">
+          <ion-button expand="block" type="submit" class="ion-no-margin" [disabled]="!quickAdd.valid"> Submit </ion-button>
+        </div>
+
+      </form>
+    </div>
+  </ion-content>
+
+
+<ng-template #forminfo>
+  <ion-content>
+    <div class="add-box">
+          <ion-item>
+            <ion-label position="stacked">waste amount : {{wasteType}}</ion-label>
+
+          </ion-item>
+    </div>
+  </ion-content>
+
+</ng-template>
+

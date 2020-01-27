@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AddWasteService } from './../../services/add-waste.service';
 
 @Component({
   selector: 'app-waste-home',
@@ -7,17 +8,25 @@ import { Router } from '@angular/router';
   styleUrls: ['./waste-home.page.scss'],
 })
 export class WasteHomePage implements OnInit {
-  myString = "beep";
-  constructor(private router: Router) { 
+  wasteTotal = 32;
+  constructor(private router: Router, private addWasteService: AddWasteService) { 
     
   }
 
   ngOnInit() {
+    
+      this.addWasteService.getWasteTotal().then(totAmount => {
+        this.wasteTotal = totAmount;
+      });
+    
   }
-
+update(){
+  this.addWasteService.getWasteTotal().then(totAmount => {
+    this.wasteTotal = totAmount;
+  });
+}
   openPage(){
-    this.myString = "boop";
-    this.router.navigateByUrl('/tabs/Add-manual');
+    this.router.navigateByUrl('/tabs/Add-Manual');
   }
 
 }
