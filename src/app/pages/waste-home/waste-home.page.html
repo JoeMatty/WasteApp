@@ -19,6 +19,14 @@
     </ion-col>
     <ion-button (click) = "update()">check</ion-button>
   </ion-row>  
+  
+  <div class="add-box">
+    <ion-list>
+        <ion-item *ngFor="let log of wasteLogs">
+          {{log.waste_name}} -- {{log.waste_type}}
+        </ion-item>
+    </ion-list>
+  </div>
 
   <ion-fab horizontal="center" vertical="bottom" slot="fixed">
     <ion-fab-button >

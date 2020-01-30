@@ -10,10 +10,12 @@ import { HttpClient } from '@angular/common/http';
 export class DatabaseService {
 
   db: SQLiteObject;
-  private databaseReady: BehaviorSubject<boolean>;
+  private databaseReady: BehaviorSubject<boolean>; //This varaible true when the db is open and readyt for commands
 
   constructor(private http: HttpClient, private sqlite: SQLite, private plt: Platform) { 
     this.databaseReady = new BehaviorSubject(false);
+
+    //Open or create the database on entry to this page
     this.plt.ready().then(() => {
         this.openOrCreate();
     })
@@ -23,6 +25,8 @@ export class DatabaseService {
     return this.databaseReady.asObservable();
   }
   openOrCreate(){
+    //Creates the database if not existed yet then opens the database
+    console.log('Open/Create DB')         //For debugging  -- remove
     return this.sqlite.create({
       name: 'wasteLog.db',
       location: 'default'
@@ -34,6 +38,18 @@ export class DatabaseService {
         this.databaseReady.next(true);
         return data;
         });
+    });
+  }
+  addWasteLog(data){
+    return this.db.executeSql('INSERT into log (waste_name, waste_type, waste_amount) VALUES (?)', [data]);
+  }
+  getWasteLogs(){
+    return this.db.executeSql('SELECT * FRON log', null).then(data =>{
+      let result = [];
+      for (let i =0; i < data.rows.length; i++){
+        result.push({ waste_name: data.rows.item(i).waste_name, waste_type: data.rows.item(i).waste_type, waste_amount: data.rows.item(i).waste_amount })
+      }
+      return result;
     });
   }
 }

@@ -3,6 +3,7 @@ import { AddWasteService } from './../../services/add-waste.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 import { DatabaseService } from 'src/app/services/database.service';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-add-manual',
@@ -10,6 +11,13 @@ import { DatabaseService } from 'src/app/services/database.service';
   styleUrls: ['./add-manual.page.scss']
 })
 export class AddManualPage implements OnInit {
+  
+  wasteLog = {
+    'waste-name': '',
+    'waste-type': '',
+    'waste-amount': ''
+  }
+
   newAmount: number = 0;
   wasteType: string = "";
   wasteAmount: string = "";
@@ -20,12 +28,15 @@ export class AddManualPage implements OnInit {
     'wasteAmount': ['0', Validators.required],
   });
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private addWasteService: AddWasteService, private databaseService: DatabaseService) { 
+  constructor(private formBuilder: FormBuilder, private router: Router, private addWasteService: AddWasteService,
+     private databaseService: DatabaseService, private modalCtrl: ModalController) { 
 
     
   }
 
   ngOnInit() {
+  }
+  ionViewDidEnter(){
   }
 
   handleWasteAmount(amount){
@@ -34,12 +45,19 @@ export class AddManualPage implements OnInit {
     });
   }
   processForm(){
-    this.newAmount += this.quickAdd.get('wasteAmount').value as number ;
-    console.log(this.newAmount );
-      // this.addWasteService.addWasteTotal(1).then(() => {
-      //   this.router.navigateByUrl('/tabs/Waste-Home');
-      // });
+    this.wasteLog["waste-amount"] = this.quickAdd.get('wasteAmount').value;
+    this.wasteLog["waste-type"] = this.quickAdd.get('wasteType').value;
+    this.wasteLog["waste-name"] = this.quickAdd.get('wasteName').value;
+    console.log("added log" + this.newAmount );  
     
+    this.databaseService.addWasteLog(this.wasteLog).then(() => {
+      this.modalCtrl.dismiss({reload: true});
+      console.log("added log" + this.newAmount );  
+    });
+    
+  }
+  dismiss(){
+    this.modalCtrl.dismiss();
   }
 }
 
