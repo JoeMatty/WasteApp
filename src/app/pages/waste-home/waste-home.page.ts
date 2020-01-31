@@ -22,18 +22,14 @@ export class WasteHomePage implements OnInit {
     
   }
   ionViewDidEnter(){
+    console.log("Ion view entered");
     this.databaseService.getDataBaseState().subscribe(rdy => {
       if(rdy){
-        this.loadWasteLogs();
+        console.log("ready");
       }
-    })
-  }
-  loadWasteLogs() {
-    this.databaseService.getWasteLogs().then(res => {
-      this.wasteLogs = res;
     });
+    console.log("Ion view entered");
   }
-
 
   //tempory functions using local ionic variable
   update(){

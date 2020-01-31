@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ModalController } from '@ionic/angular';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 @Component({
   selector: 'app-add-manual',
@@ -21,7 +22,8 @@ export class AddManualPage implements OnInit {
   newAmount: number = 0;
   wasteType: string = "";
   wasteAmount: string = "";
-
+  testString: string = "empt";
+  testString2: string = "-";
   quickAdd = this.formBuilder.group({
     'wasteName': ['', Validators.required],
     'wasteType': ['', Validators.required],
@@ -29,14 +31,21 @@ export class AddManualPage implements OnInit {
   });
 
   constructor(private formBuilder: FormBuilder, private router: Router, private addWasteService: AddWasteService,
-     private databaseService: DatabaseService, private modalCtrl: ModalController) { 
-
-    
+     private databaseService: DatabaseService, private barcodeScanner: BarcodeScanner) { 
   }
 
   ngOnInit() {
   }
+
   ionViewDidEnter(){
+    this.testString2 += "-" + this.databaseService.setupString;
+  }
+  scanBarcode(){
+    this.barcodeScanner.scan().then(barcodeData => {
+      alert('Barcode data :'+ barcodeData.text);
+     }).catch(err => {
+         console.log('Error', err);
+     });
   }
 
   handleWasteAmount(amount){
@@ -45,19 +54,20 @@ export class AddManualPage implements OnInit {
     });
   }
   processForm(){
-    this.wasteLog["waste-amount"] = this.quickAdd.get('wasteAmount').value;
-    this.wasteLog["waste-type"] = this.quickAdd.get('wasteType').value;
-    this.wasteLog["waste-name"] = this.quickAdd.get('wasteName').value;
-    console.log("added log" + this.newAmount );  
+    let wastename = this.quickAdd.get('wasteName').value;
+    let wastetype = this.quickAdd.get('wasteType').value;
+    let wasteamount = this.quickAdd.get('wasteAmount').value;
     
-    this.databaseService.addWasteLog(this.wasteLog).then(() => {
-      this.modalCtrl.dismiss({reload: true});
-      console.log("added log" + this.newAmount );  
+    console.log("Add-man: sending log" + this.newAmount );  
+
+    this.testString2 += "-" + this.databaseService.setupString;
+    this.databaseService.addWasteLog(wastename,wastetype,wasteamount).then(() => {
+
+      this.testString = this.databaseService.resultString;
+      console.log("finished" + this.newAmount );  
+
     });
     
-  }
-  dismiss(){
-    this.modalCtrl.dismiss();
   }
 }
 

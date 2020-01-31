@@ -11,7 +11,11 @@ const routes: Routes = [
         loadChildren: () => import('./pages/add-manual/add-manual.module').then( m => m.AddManualPageModule)
       }
     ]
+  },  {
+    path: 'full-log',
+    loadChildren: () => import('./pages/full-log/full-log.module').then( m => m.FullLogPageModule)
   }
+
 
 
 ];

@@ -5,13 +5,14 @@ import { IonicModule } from '@ionic/angular';
 import { AddManualPageRoutingModule } from './add-manual-routing.module';
 import { AddManualPage } from './add-manual.page';
 
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    AddManualPageRoutingModule
+    AddManualPageRoutingModule,
   ],
   declarations: [AddManualPage]
 })
