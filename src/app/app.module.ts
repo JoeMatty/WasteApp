@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy, ToastController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SQLite } from '@ionic-native/sqlite/ngx';
@@ -14,6 +13,8 @@ import { IonicStorageModule } from '@ionic/storage';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { LogModalPageModule } from './pages/log-modal/log-modal.module';
+import { MaterialModule } from './material.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,6 +24,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
     FormsModule,
     ReactiveFormsModule,
     IonicStorageModule.forRoot(),
+    LogModalPageModule,
     BrowserAnimationsModule],
     
   providers: [
@@ -31,7 +33,8 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     SQLite,
     BarcodeScanner,
-    SQLitePorter
+    SQLitePorter,
+    ToastController
   ],
   bootstrap: [AppComponent]
 })

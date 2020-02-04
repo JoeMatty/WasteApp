@@ -5,11 +5,23 @@ import { Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
+/*
+wastename -
+wasteamount -
+wastetype -
+wasteDescription  //description of product e.g coca cola and reasons for buying e.g. super duper thr.. optional field.
+was-recycled bool
+wasnecessary  
+*/
 export interface Log {
   id : number,
   wastename: string,
+  wasteamount: number,
   wastetype: string,
-  wasteamount: number
+  wastematerial: string,
+  wasrecycled: boolean,
+  necessary: string,
+  wasteNotes: string 
 }
 
 @Injectable({
@@ -47,26 +59,46 @@ export class DatabaseService {
       location: 'default'
     }).then((db: SQLiteObject) => {
         this.db = db;
-        return this.db.executeSql('CREATE TABLE IF NOT EXISTS log(id INTEGER PRIMARY KEY AUTOINCREMENT, waste_name VARHCHAR(32),waste_type VARHCHAR(15), waste_amount SMALLINT)',[])
+        return this.db.executeSql('CREATE TABLE IF NOT EXISTS log(id INTEGER PRIMARY KEY AUTOINCREMENT, waste_name VARHCHAR(32),waste_amount SMALLINT, waste_type VARHCHAR(15), ' +
+        'waste_material VARCHAR(15) ,was_recycled BOOLEAN, is_necessary VARCHAR(1), waste_notes VARHCHAR(100))',[])
           .then(data => {
               this.databaseReady.next(true);
-                this.setupString = "Setup Complete"
+             
           return data;
           }).catch(() => {
-          this.setupString = "failed to setup"
+            
         })
     });
   }
-  addWasteLog(wastename,wastetype,wasteamount){
+  addWasteLog(wastename,wasteamount,wastetype,waste_material,was_recycled,is_necessary,waste_notes){
     
     // let data = [wastename,wastetype,wasteamount]
 
-    return this.db.executeSql('INSERT into log (waste_name, waste_type, waste_amount) VALUES (?,?,?)', [wastename,wastetype,wasteamount]).then((data) =>{
-      this.loadWasteLogs();
-      this.resultString = "log added"
-    }).catch((err) =>{
-      this.resultString = "log add failed: " + err;
+    return this.db.executeSql('INSERT into log (waste_name, waste_amount, waste_type, waste_material, was_recycled, is_necessary, waste_notes) VALUES (?,?,?,?,?,?,?)', 
+      [wastename,wasteamount,wastetype,waste_material,was_recycled,is_necessary,waste_notes]).then((data) =>{
+        this.loadWasteLogs();
+        
+      }).catch((err) =>{
+        this.resultString = "log add failed: " + err;
     })
+  }
+  getWasteLog(id: Number){
+    return this.db.executeSql('SELECT * FROM log WHERE id = ?', [id]).then(data =>{
+      let result: Log;
+
+      result.id = data.rows.item(0).id;
+      result.wastename = data.rows.item(0).waste_name;
+      result.wasteamount = data.rows.item(0).waste_amount;
+      result.wastetype = data.rows.item(0).waste_type; 
+      result.wastematerial = data.rows.item(0).waste_material;
+      result.wasrecycled = data.rows.item(0).was_recycled;
+      result.necessary = data.rows.item(0).is_necessary;
+      result.wasteNotes = data.rows.item(0).waste_notes;    
+          
+      return result;
+      
+    })
+   
   }
   loadWasteLogs(){
     return this.db.executeSql('SELECT * FROM log', []).then(data =>{
@@ -79,10 +111,16 @@ export class DatabaseService {
             result.push({ 
               id: data.rows.item(i).id,
               wastename: data.rows.item(i).waste_name, 
+              wasteamount: data.rows.item(i).waste_amount,
               wastetype: data.rows.item(i).waste_type, 
-              wasteamount: data.rows.item(i).waste_amount 
+              wastematerial : data.rows.item(i).waste_material,
+              wasrecycled: data.rows.item(i).was_recycled,
+              necessary: data.rows.item(i).is_necessary,
+              wasteNotes: data.rows.item(i).waste_notes
             });        
+              
           }
+          
           this.resultString = "success";
       }
       this.bevWasteLogs.next(result);

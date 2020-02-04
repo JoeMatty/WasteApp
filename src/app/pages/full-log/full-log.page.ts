@@ -1,6 +1,9 @@
 import { Component, OnInit,ViewChild  } from '@angular/core';
 import { DatabaseService, Log } from 'src/app/services/database.service';
-import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatCheckbox } from '@angular/material';
+import { LogModalPage } from '../log-modal/log-modal.page'
+import { ModalController } from '@ionic/angular';
+
 @Component({
   selector: 'app-full-log',
   templateUrl: './full-log.page.html',
@@ -8,9 +11,9 @@ import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 })
 export class FullLogPage implements OnInit {
 
-  constructor(private databaseService: DatabaseService) { }
+  constructor(private databaseService: DatabaseService, private modalCtrl: ModalController) { }
   wasteLogs:  Log[] = [];
-  displayedColumns: string[] = ['wastename', 'wastetype', 'wasteamount'];
+  displayedColumns: string[] = ['wastename', 'wastetype', 'wasteamount','material'];
   dataSource = new MatTableDataSource<Log>([]);
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -18,9 +21,7 @@ export class FullLogPage implements OnInit {
 
   //debug string
   debug = "";
-  debug2 = "";
-  debug3 ="heer";
-  debugCount = 0;
+  databaseState;
   //
   
   ngOnInit() {
@@ -28,6 +29,7 @@ export class FullLogPage implements OnInit {
     this.dataSource.sort = this.sort;
 
     this.databaseService.getDataBaseState().subscribe(rdy => {
+      this.databaseState = rdy;
       if (rdy) {
         this.databaseService.getbevWasteLogs().subscribe(logs => {
           this.dataSource.data = logs;
@@ -37,19 +39,18 @@ export class FullLogPage implements OnInit {
     })
   }
 
-  // ionViewDidEnter(){
-  //   console.log("Ion view entered");
-  //   this.databaseService.getDataBaseState().subscribe(rdy => {
-  //     if(rdy){
-  //       this.loadWasteLogs();
-  //       console.log("ready");
-  //     }
-  //   });
-  //   console.log("Ion view entered");
-  // }
+  ionViewDidEnter(){
+    
+    if(this.databaseState){
+         this.loadWasteLogs();
+
+    }
+
+
+  }
   loadWasteLogs() {
     this.databaseService.loadWasteLogs().then(res => {
-      this.debug = this.databaseService.setupString;
+      
     }).catch(() => {
       this.debug = "failed to load";
     });

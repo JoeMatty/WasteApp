@@ -14,6 +14,10 @@ const routes: Routes = [
   },  {
     path: 'full-log',
     loadChildren: () => import('./pages/full-log/full-log.module').then( m => m.FullLogPageModule)
+  },
+  {
+    path: 'log-modal',
+    loadChildren: () => import('./pages/log-modal/log-modal.module').then( m => m.LogModalPageModule)
   }
 
 

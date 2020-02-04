@@ -19,19 +19,30 @@
             <ion-label position="stacked">Waste Name <ion-text color="danger">*</ion-text> </ion-label>
             <ion-input  type="text" formControlName="wasteName" ></ion-input>
           </ion-item>
+          
+          <ion-item>
+            <ion-item>
+              <ion-label position="stacked">Amount of waste <ion-text color="danger">*</ion-text> </ion-label>
+              <ion-input type="number" formControlName="wasteAmount"></ion-input>
+            </ion-item>
+          </ion-item>
 
           <ion-item>
             <ion-label position="stacked">Waste Type <ion-text color="danger">*</ion-text> </ion-label>
-            <ion-input  type="text" formControlName="wasteType" ></ion-input>
+            <ion-input  type="text" formControlName="wasteType" placeholder ="e.g. bottle, Carton" ></ion-input>
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Amount of waste <ion-text color="danger">*</ion-text> </ion-label>
-            <ion-input type="number" formControlName="wasteAmount"></ion-input>
+            <ion-label position="stacked">Waste Material <ion-text color="danger">*</ion-text> </ion-label>
+            <ion-icon  src="../../../assets/imgs/PET1large.svg"></ion-icon><ion-input  (click) = "showPicker()" type="text" formControlName="wasteMaterial" ></ion-input>
           </ion-item>
 
+          <ion-item>
+            <ion-label position="stacked">Extra Notes <ion-text color="danger">*</ion-text> </ion-label>
+            <ion-textarea rows="2" type="text" formControlName="wasteNotes"></ion-textarea>
+          </ion-item>
         </ion-list>
-  
+        
         <div class="ion-padding">
           <ion-button expand="block" type="submit" class="ion-no-margin" [disabled]="!quickAdd.valid"> Submit </ion-button>
         </div>

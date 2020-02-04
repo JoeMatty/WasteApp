@@ -13,6 +13,18 @@ import {
 } from "@angular/material";
  
 @NgModule({
+  imports: [
+    MatTableModule,
+    MatStepperModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatPaginatorModule,
+    MatSortModule
+  ],
   exports: [
     MatTableModule,
     MatStepperModule,

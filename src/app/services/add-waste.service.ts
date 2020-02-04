@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
+
 const STORAGE_KEY = 'wasteAmountTotal';
 const defaultWasteValue = 0;
 
