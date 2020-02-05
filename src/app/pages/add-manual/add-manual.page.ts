@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, Validators} from '@angular/forms';
 import { DatabaseService } from 'src/app/services/database.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { ToastController, PickerController } from '@ionic/angular';
+import { ToastController, PickerController,IonDatetime } from '@ionic/angular';
 import { PickerOptions } from '@ionic/core';
 import { ProductapiService } from 'src/app/services/productapi.service';
 
@@ -18,6 +18,8 @@ export class AddManualPage implements OnInit {
   newAmount: number = 0;
   wasteType: string = "";
   wasteAmount: string = "";
+  dateInit: Date = new Date;
+
   testString: string = "empt";
   testString2: string = "-";
 
@@ -28,6 +30,8 @@ export class AddManualPage implements OnInit {
     'wasteMaterial': [],
     'wasRecycled' : [],
     'necessary' : [],
+    'logDate': [],
+    'logTime': [],
     'wasteNotes' : ['', Validators.maxLength(100)]
   });
 
@@ -37,9 +41,11 @@ export class AddManualPage implements OnInit {
   }
 
   ngOnInit() {
+    
   }
   ionViewDidEnter(){
     this.testString2 += "-" + this.databaseService.setupString;
+    
   }
   manualBarcode(){
       this.productService.searchData(5010459005018).subscribe(result => {
@@ -74,20 +80,34 @@ export class AddManualPage implements OnInit {
     });
   }
   processForm(){
+    let logDateTime= new Date;
+    let tempTime = new Date(this.quickAdd.get('logTime').value);
+    let tempDate = new Date(this.quickAdd.get('logDate').value);
+   
+
+    logDateTime.setFullYear(tempDate.getFullYear());
+    logDateTime.setMonth(tempDate.getMonth());
+    logDateTime.setDate(tempDate.getDate());    
+    logDateTime.setHours(tempTime.getHours());
+    logDateTime.setMinutes(tempTime.getMinutes());
+    logDateTime.setSeconds(0);
+    logDateTime.setUTCMilliseconds(0);
+
+
     let wastename = this.quickAdd.get('wasteName').value;
     let wastetype = this.quickAdd.get('wasteType').value;
     let wasteamount = this.quickAdd.get('wasteAmount').value;
     let wasteMaterial = this.quickAdd.get('wasteMaterial').value;
     let wasRecycled = this.quickAdd.get('wasRecycled').value;
     let necessary = this.quickAdd.get('necessary').value;
+    let logTime =  logDateTime;
     let wasteNotes = this.quickAdd.get('wasteNotes').value;
-
-    console.log("Add-man: sending log" + this.newAmount );  
-    this.presentToast();
-    this.testString2 += "-" + this.databaseService.setupString;
-    this.databaseService.addWasteLog(wastename,wasteamount,wastetype,wasteMaterial,wasRecycled,necessary,wasteNotes)
+    
+    
+    this.databaseService.addWasteLog(wastename,wasteamount,wastetype,wasteMaterial,wasRecycled,necessary,wasteNotes,logTime)
       .then(() => {
-        this.testString = this.databaseService.resultString;
+        
+        this.presentToast();
         console.log("finished" + this.newAmount );  
 
     });

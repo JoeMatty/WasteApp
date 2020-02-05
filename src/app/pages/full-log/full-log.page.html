@@ -1,11 +1,21 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-button slot="end" (onclick)="presentLoadingWithOptions()">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-button>
     <ion-title>View Your Log  </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-item></ion-item>
+  <ion-refresher slot="fixed" pullFactor="0.5" pullMin="100" pullMax="200" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
  
     <ng-container matColumnDef="wastename">
@@ -18,15 +28,15 @@
       <td mat-cell *matCellDef="let log"> {{log.wastetype}} </td>
     </ng-container>
  
-    <ng-container matColumnDef="wasteamount">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
-      <td mat-cell *matCellDef="let log"> {{log.wasteamount}} </td>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+      <td mat-cell *matCellDef="let log"> {{log.logdate.getDay()}}/{{log.logdate.getMonth()}}/{{log.logdate.getFullYear()}} </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <td mat-cell *matCellDef="let log"> <ion-button expand="block"size="small">test</ion-button> </td>
     </ng-container>
 
-    <ng-container matColumnDef="material">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Material</th>
-      <td mat-cell *matCellDef="let log"> {{log.wastematerial}} </td>
-    </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
  
@@ -34,8 +44,5 @@
   
  
 <mat-paginator [pageSizeOptions]="[2, 5, 8]" showFirstLastButtons></mat-paginator>
-
-<ion-button (click) = "loadWasteLogs()">reload</ion-button>
-<ion-button (click) = "DelWasteLogs()">DELETE</ion-button>
 
 </ion-content>

@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/Waste-Home"></ion-back-button>
     </ion-buttons>
@@ -21,22 +21,30 @@
           </ion-item>
           
           <ion-item>
-            <ion-item>
-              <ion-label position="stacked">Amount of waste <ion-text color="danger">*</ion-text> </ion-label>
+            <ion-item >
+              <ion-label position="stacked">Amount<ion-text color="danger">*</ion-text> </ion-label>
               <ion-input type="number" formControlName="wasteAmount"></ion-input>
+            </ion-item>
+            <ion-item >
+              <ion-label position="stacked">Waste Type <ion-text color="danger">*</ion-text> </ion-label>
+              <ion-input  type="text" formControlName="wasteType" placeholder ="Bottle" ></ion-input>
             </ion-item>
           </ion-item>
 
           <ion-item>
-            <ion-label position="stacked">Waste Type <ion-text color="danger">*</ion-text> </ion-label>
-            <ion-input  type="text" formControlName="wasteType" placeholder ="e.g. bottle, Carton" ></ion-input>
-          </ion-item>
-
-          <ion-item>
             <ion-label position="stacked">Waste Material <ion-text color="danger">*</ion-text> </ion-label>
-            <ion-icon  src="../../../assets/imgs/PET1large.svg"></ion-icon><ion-input  (click) = "showPicker()" type="text" formControlName="wasteMaterial" ></ion-input>
+            <ion-input  (click) = "showPicker()" type="text" readonly = "true" formControlName="wasteMaterial" ><img class="wasteImg" src="../../../assets/imgs/PET1large.svg"></ion-input>
           </ion-item>
-
+          <ion-item>
+            <ion-item side ="start">
+              <ion-label position="stacked">Date <ion-text color="danger"></ion-text> </ion-label>
+              <ion-datetime displayFormat="MM DD YYYY" formControlName="logDate"></ion-datetime>
+            </ion-item>
+            <ion-item side ="end">
+              <ion-label position="stacked">Time <ion-text color="danger"></ion-text> </ion-label>
+              <ion-datetime displayFormat="HH:mm" formControlName="logTime"></ion-datetime>
+            </ion-item>
+          </ion-item>
           <ion-item>
             <ion-label position="stacked">Extra Notes <ion-text color="danger">*</ion-text> </ion-label>
             <ion-textarea rows="2" type="text" formControlName="wasteNotes"></ion-textarea>

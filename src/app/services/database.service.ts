@@ -21,7 +21,8 @@ export interface Log {
   wastematerial: string,
   wasrecycled: boolean,
   necessary: string,
-  wasteNotes: string 
+  wasteNotes: string,
+  logdate: Date
 }
 
 @Injectable({
@@ -60,7 +61,7 @@ export class DatabaseService {
     }).then((db: SQLiteObject) => {
         this.db = db;
         return this.db.executeSql('CREATE TABLE IF NOT EXISTS log(id INTEGER PRIMARY KEY AUTOINCREMENT, waste_name VARHCHAR(32),waste_amount SMALLINT, waste_type VARHCHAR(15), ' +
-        'waste_material VARCHAR(15) ,was_recycled BOOLEAN, is_necessary VARCHAR(1), waste_notes VARHCHAR(100))',[])
+        'waste_material VARCHAR(15) ,was_recycled BOOLEAN, is_necessary VARCHAR(1), waste_notes VARHCHAR(100), log_date VARHCHAR(24) )',[])
           .then(data => {
               this.databaseReady.next(true);
              
@@ -70,12 +71,12 @@ export class DatabaseService {
         })
     });
   }
-  addWasteLog(wastename,wasteamount,wastetype,waste_material,was_recycled,is_necessary,waste_notes){
+  addWasteLog(wastename,wasteamount,wastetype,waste_material,was_recycled,is_necessary,waste_notes,log_date:Date){
     
     // let data = [wastename,wastetype,wasteamount]
 
-    return this.db.executeSql('INSERT into log (waste_name, waste_amount, waste_type, waste_material, was_recycled, is_necessary, waste_notes) VALUES (?,?,?,?,?,?,?)', 
-      [wastename,wasteamount,wastetype,waste_material,was_recycled,is_necessary,waste_notes]).then((data) =>{
+    return this.db.executeSql('INSERT into log (waste_name, waste_amount, waste_type, waste_material, was_recycled, is_necessary, waste_notes,log_date) VALUES (?,?,?,?,?,?,?,?)', 
+      [wastename,wasteamount,wastetype,waste_material,was_recycled,is_necessary,waste_notes,log_date.toISOString()]).then((data) =>{
         this.loadWasteLogs();
         
       }).catch((err) =>{
@@ -94,6 +95,7 @@ export class DatabaseService {
       result.wasrecycled = data.rows.item(0).was_recycled;
       result.necessary = data.rows.item(0).is_necessary;
       result.wasteNotes = data.rows.item(0).waste_notes;    
+      result.logdate = new Date(data.rows.item(0).log_date);
           
       return result;
       
@@ -102,26 +104,23 @@ export class DatabaseService {
   }
   loadWasteLogs(){
     return this.db.executeSql('SELECT * FROM log', []).then(data =>{
-      let result = [];
-      console.log("Preparing to get Waste logs");
+      let result: Log[];
+      
       if (data.rows.length > 0){
-        this.setupString = "";
+        
           for (let i =0; i < data.rows.length; i++){
-            this.setupString += "loop " + i; 
-            result.push({ 
-              id: data.rows.item(i).id,
-              wastename: data.rows.item(i).waste_name, 
-              wasteamount: data.rows.item(i).waste_amount,
-              wastetype: data.rows.item(i).waste_type, 
-              wastematerial : data.rows.item(i).waste_material,
-              wasrecycled: data.rows.item(i).was_recycled,
-              necessary: data.rows.item(i).is_necessary,
-              wasteNotes: data.rows.item(i).waste_notes
-            });        
+                   
+              result[i].id = data.rows.item(i).id;
+              result[i].wastename = data.rows.item(i).waste_name;
+              result[i].wasteamount = data.rows.item(i).waste_amount;
+              result[i].wastetype = data.rows.item(i).waste_type; 
+              result[i].wastematerial = data.rows.item(i).waste_material;
+              result[i].wasrecycled = data.rows.item(i).was_recycled;
+              result[i].necessary = data.rows.item(i).is_necessary;
+              result[i].wasteNotes = data.rows.item(i).waste_notes;    
+              result[i].logdate = new Date(data.rows.item(i).log_date);      
               
           }
-          
-          this.resultString = "success";
       }
       this.bevWasteLogs.next(result);
     })
