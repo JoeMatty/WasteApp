@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { FullLogPageRoutingModule } from './full-log-routing.module';
 import { FullLogPage } from './full-log.page';
 import { MaterialModule } from '../../material.module';
+import { LogModalPage } from '../log-modal/log-modal.page'
 
 @NgModule({
   imports: [

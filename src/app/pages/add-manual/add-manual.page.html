@@ -20,7 +20,7 @@
             <ion-input  type="text" formControlName="wasteName" ></ion-input>
           </ion-item>
           
-          <ion-item>
+          <ion-item class="ion-no-margin ion-no-padding">
             <ion-item >
               <ion-label position="stacked">Amount<ion-text color="danger">*</ion-text> </ion-label>
               <ion-input type="number" formControlName="wasteAmount"></ion-input>
@@ -35,10 +35,10 @@
             <ion-label position="stacked">Waste Material <ion-text color="danger">*</ion-text> </ion-label>
             <ion-input  (click) = "showPicker()" type="text" readonly = "true" formControlName="wasteMaterial" ><img class="wasteImg" src="../../../assets/imgs/PET1large.svg"></ion-input>
           </ion-item>
-          <ion-item>
+          <ion-item class="ion-no-margin ion-no-padding">
             <ion-item side ="start">
               <ion-label position="stacked">Date <ion-text color="danger"></ion-text> </ion-label>
-              <ion-datetime displayFormat="MM DD YYYY" formControlName="logDate"></ion-datetime>
+              <ion-datetime displayFormat="MM-DD-YYYY" formControlName="logDate"></ion-datetime>
             </ion-item>
             <ion-item side ="end">
               <ion-label position="stacked">Time <ion-text color="danger"></ion-text> </ion-label>

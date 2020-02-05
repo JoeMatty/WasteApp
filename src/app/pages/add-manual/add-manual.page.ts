@@ -26,7 +26,7 @@ export class AddManualPage implements OnInit {
   quickAdd = this.formBuilder.group({
     'wasteName': ['', Validators.required],
     'wasteAmount': ['1', Validators.required],
-    'wasteType': ['', Validators.required],
+    'wasteType': ['', Validators.required, Validators.maxLength(15)],
     'wasteMaterial': [],
     'wasRecycled' : [],
     'necessary' : [],
@@ -44,6 +44,9 @@ export class AddManualPage implements OnInit {
     
   }
   ionViewDidEnter(){
+    this.quickAdd.get('logTime').setValue(this.dateInit.toISOString());
+    this.quickAdd.get('logDate').setValue(this.dateInit.toISOString());
+    
     this.testString2 += "-" + this.databaseService.setupString;
     
   }
@@ -98,13 +101,13 @@ export class AddManualPage implements OnInit {
     let wastetype = this.quickAdd.get('wasteType').value;
     let wasteamount = this.quickAdd.get('wasteAmount').value;
     let wasteMaterial = this.quickAdd.get('wasteMaterial').value;
-    let wasRecycled = this.quickAdd.get('wasRecycled').value;
-    let necessary = this.quickAdd.get('necessary').value;
+    let wasRecycled = true;//this.quickAdd.get('wasRecycled').value;
+    let necessary = "a";//this.quickAdd.get('necessary').value;
     let logTime =  logDateTime;
     let wasteNotes = this.quickAdd.get('wasteNotes').value;
     
     
-    this.databaseService.addWasteLog(wastename,wasteamount,wastetype,wasteMaterial,wasRecycled,necessary,wasteNotes,logTime)
+    this.databaseService.addWasteLog(wastename,wasteamount,wastetype,wasteMaterial,wasRecycled,necessary,wasteNotes,logDateTime)
       .then(() => {
         
         this.presentToast();

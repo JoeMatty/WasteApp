@@ -1,9 +1,47 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>logModal</ion-title>
+    <ion-buttons slot="end">
+      <ion-button  (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
-
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Log Info</ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-label>{{log.id}}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{log.logdate}}</ion-label>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>Product Type</ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-label>{{log.wastename}}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{log.wastetype}}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{log.wastematerial}}</ion-label>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>Log Description</ion-label>
+    </ion-item-divider>
+    <ion-item>
+      <ion-label>{{log.wasrecycled}}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{log.necessary}}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{log.wasteNotes}}</ion-label>
+    </ion-item>
+  </ion-item-group>
 </ion-content>

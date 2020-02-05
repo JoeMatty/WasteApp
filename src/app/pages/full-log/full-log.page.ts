@@ -24,7 +24,7 @@ export class FullLogPage implements OnInit {
     wasrecycled: true,
     necessary: "a",
     wasteNotes: "Was bought on the weekend at the beach",
-    logdate: new Date("2013-12-09T17:22:00.000Z")
+    logdate: new Date("2013-12-09 17:22:00.000")
   },
   {
     id : 2,
@@ -59,6 +59,7 @@ export class FullLogPage implements OnInit {
         this.databaseService.getbevWasteLogs().subscribe(logs => {
           this.dataSource.data = logs;
           
+          
         })
       }
     })
@@ -82,6 +83,7 @@ export class FullLogPage implements OnInit {
   }  
 
   loadWasteLogs() {
+    alert("try to refresh")
     this.databaseService.loadWasteLogs().then(res => {
       
     }).catch(() => {
@@ -101,5 +103,13 @@ export class FullLogPage implements OnInit {
     });
     this.loadWasteLogs();
     return await loading.present();
+  }
+  async openModal(log) {
+    console.log(log);
+    const modal = await this.modalCtrl.create({
+      component: LogModalPage,
+      componentProps: {log}
+    });
+    return await modal.present();
   }
 }
