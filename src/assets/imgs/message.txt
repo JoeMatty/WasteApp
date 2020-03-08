@@ -1,0 +1,42 @@
+*BASE_PRICE: [+1646]
+
+CAS: Cooler Master MasterBox NR600 Mid-Tower Gaming Case
+
+
+COOL: High Performance Ultra Pure Clear Distilled Water [-4]
+
+CPU: Intel(R) Core™ i9-9900K - 8-Core 3.60GHz, 5.00GHz Turbo - 16MB Cache + UHD Graphics, Ultimate OC Compatible [+20]
+
+
+EXPAN: Built-in USB Ports
+FAN: Hyper Liquid II - Medium Kit - Rigid Tube - RGB Ultimate OC Compatible
+
+
+HDD: 2TB Seagate BarraCuda SATA-III 6.0Gb/s 7200RPM Hard Drive (1 Drive)
+HOLIDAY1: 2m Black Premium DisplayPort v1.4 Cable [+8] (1 piece)
+
+INTERBROWSER1: Google Chrome Internet Browser [+0]
+
+M2SSD: 512GB (1x512GB) Intel 660p M.2 NVMe PCIe SSD - 1500MB/s Read & 1000MB/s Write (Single Drive)
+
+MEMORY: 16GB (2x8GB) DDR4/3200mhz Dual Channel Memory (Corsair Vengeance Pro RGB w/Heat Spreader)
+MONITOR: 27" MSI Optix MAG272 1ms 165Hz 1920 x 1080, HDMI & DP Black FHD FreeSync Gaming Monitor [+194] (Single Monitor)
+MOTHERBOARD: Asus Prime Z390-P: ATX w/ USB 3.1, SATA3, 2x M.2
+
+NETWORK: ONBOARD 10/100/1000 GIGABIT LAN PORT -- As standard on all PCs
+OS: Windows 10 Home (64-bit Edition) Perfect for most people with all the core features of Windows 10 including: automatic updates, Cortana and DirectX 12 graphics support (No Recovery Media)
+OVERCLOCK: Pro OC (Overclock up to 10%)
+
+POWERSUPPLY: Corsair Vengeance Series 750M 750W 80+ Silver Gaming Power Supply [+13]
+
+RUSH: Standard Processing Time
+SOUND: HIGH DEFINITION ON-BOARD AUDIO
+SSD: 250GB Samsung 860 EVO 2.5" SSD - 550MB/s Read / 520MB/s Write [+49] (1 Drive)
+VIDEO: MSI GeForce(R) RTX 2060 Super 8GB - Ray Tracing Technology, DX12(R), VR Ready, HDMI, DP - 4 Monitor Support (Single Card)
+WARRANTY: DESKTOP STANDARD WARRANTY: 3 Year Labour, 2 Year Parts, 6 Month Collect and Return plus Life-Time Technical Support
+----------------------------------------------------------------------
+            Shipping: Standard Insured Delivery UK mainland      £0.00
+                                                   SUBTOTAL  £1,926.00
+                                                  VAT (20%)    £385.20
+----------------------------------------------------------------------
+                                                GRAND TOTAL  £2,311.20

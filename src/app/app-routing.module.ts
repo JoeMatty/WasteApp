@@ -11,13 +11,31 @@ const routes: Routes = [
         loadChildren: () => import('./pages/add-manual/add-manual.module').then( m => m.AddManualPageModule)
       }
     ]
-  },  {
+  },
+  {
     path: 'full-log',
     loadChildren: () => import('./pages/full-log/full-log.module').then( m => m.FullLogPageModule)
   },
   {
     path: 'log-modal',
     loadChildren: () => import('./pages/log-modal/log-modal.module').then( m => m.LogModalPageModule)
+  },
+  {
+    path: 'barcode-modal',
+    loadChildren: () => import('./modals/barcode-modal/barcode-modal.module').then( m => m.BarcodeModalPageModule)
+  },
+  {
+    path: 'barcode-scan',
+    loadChildren: () => import('./pages/barcode-scan/barcode-scan.module').then( m => m.BarcodeScanPageModule)
+  },
+  {
+    path: 'Add-Manual',
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('./pages/add-manual/add-manual.module').then( m => m.AddManualPageModule)
+      }
+    ]
   }
 
 

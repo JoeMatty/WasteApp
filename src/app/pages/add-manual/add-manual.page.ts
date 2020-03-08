@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AddWasteService } from './../../services/add-waste.service';
 import { Router } from '@angular/router';
 import { FormBuilder, Validators} from '@angular/forms';
 import { DatabaseService } from 'src/app/services/database.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { ToastController, PickerController,IonDatetime } from '@ionic/angular';
+import { ToastController, PickerController,IonDatetime, NavController, IonSlides } from '@ionic/angular';
 import { PickerOptions } from '@ionic/core';
 import { ProductapiService } from 'src/app/services/productapi.service';
+import { WasteHomePage } from '../waste-home/waste-home.page';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-add-manual',
@@ -14,21 +16,24 @@ import { ProductapiService } from 'src/app/services/productapi.service';
   styleUrls: ['./add-manual.page.scss']
 })
 export class AddManualPage implements OnInit {
+
+  @ViewChild('slides', { static: true }) slider: IonSlides;  
+  segment = 0;  
   result = null;
   newAmount: number = 0;
   wasteType: string = "";
   wasteAmount: string = "";
   dateInit: Date = new Date;
-
+  category = 0;
   testString: string = "empt";
   testString2: string = "-";
 
   quickAdd = this.formBuilder.group({
     'wasteName': ['', Validators.required],
     'wasteAmount': ['1', Validators.required],
-    'wasteType': ['', Validators.required, Validators.maxLength(15)],
+    'wasteType': ['', Validators.required],
     'wasteMaterial': [],
-    'wasRecycled' : [],
+    'wasRecycled' : [true],
     'necessary' : [],
     'logDate': [],
     'logTime': [],
@@ -37,34 +42,53 @@ export class AddManualPage implements OnInit {
 
   constructor(private formBuilder: FormBuilder, private router: Router, private addWasteService: AddWasteService,
      private databaseService: DatabaseService, private barcodeScanner: BarcodeScanner, private toastController: ToastController,
-     private productService: ProductapiService, private pickerCtrl: PickerController) { 
+     private productService: ProductapiService, private pickerCtrl: PickerController, public navCtrl: NavController) { 
   }
 
   ngOnInit() {
     
   }
   ionViewDidEnter(){
+    //Finds the current Date/Time and sets it as the default value in the Log time form option
+
     this.quickAdd.get('logTime').setValue(this.dateInit.toISOString());
     this.quickAdd.get('logDate').setValue(this.dateInit.toISOString());
-    
-    this.testString2 += "-" + this.databaseService.setupString;
     
   }
   manualBarcode(){
       this.productService.searchData(5010459005018).subscribe(result => {
+          let product: any = result
+          if(product['found']){
+            alert(JSON.stringify(product));
+          }
+          else{
+            console.log(JSON.stringify(product));
+          }
         
-        this.result = result;
       });
       
-      alert(JSON.stringify(this.result));
+      
 
   }
   scanBarcode(){
     this.barcodeScanner.scan().then(barcodeData => {
-      alert('Barcode data :'+ barcodeData.text);
-      this.result = this.productService.searchData(+barcodeData.text)
-      console.log(this.result);
-      alert('Barcode data :'+ this.result);
+      //After scanning a barcode value it will check the database for a matching product
+      this.result = this.productService.searchData(+barcodeData.text).subscribe(result => {
+        let product: any = result;
+        if(product['found'] == true){
+          //if a matching product is found it will be displayed on the form
+
+          
+          this.quickAdd.get('wasteName').setValue(product.product.productName);
+          this.quickAdd.get('wasteType').setValue(product.product.productType);
+          this.quickAdd.get('wasteMaterial').setValue(product.product.material);
+          this.quickAdd.get('wasteNotes').setValue(this.quickAdd.get('wasteNotes').value + "Barcode: " + product.product.barcodeid);
+
+        }
+        else{
+          alert(JSON.stringify(product));
+        }
+      })
      }).catch(err => {
          console.log('Error', err);
      });
@@ -82,6 +106,13 @@ export class AddManualPage implements OnInit {
       this.router.navigateByUrl('/tabs/Waste-Home');
     });
   }
+  async segmentChanged(event) {
+    await this.slider.slideTo(event.detail.value);
+
+  }
+  async slideChanged() {  
+    this.category = await this.slider.getActiveIndex();  
+  }  
   processForm(){
     let logDateTime= new Date;
     let tempTime = new Date(this.quickAdd.get('logTime').value);
@@ -101,22 +132,56 @@ export class AddManualPage implements OnInit {
     let wastetype = this.quickAdd.get('wasteType').value;
     let wasteamount = this.quickAdd.get('wasteAmount').value;
     let wasteMaterial = this.quickAdd.get('wasteMaterial').value;
-    let wasRecycled = true;//this.quickAdd.get('wasRecycled').value;
+    let wasRecycled = this.quickAdd.get('wasRecycled').value;
     let necessary = "a";//this.quickAdd.get('necessary').value;
     let logTime =  logDateTime;
     let wasteNotes = this.quickAdd.get('wasteNotes').value;
-    
-    
+    //delete
+    console.log(wastename)
     this.databaseService.addWasteLog(wastename,wasteamount,wastetype,wasteMaterial,wasRecycled,necessary,wasteNotes,logDateTime)
       .then(() => {
         
         this.presentToast();
-        console.log("finished" + this.newAmount );  
+        this.navCtrl.navigateRoot('/tabs/Waste-Home')
 
     });
     
   }
+  async showTimePicker() {
+    let opts: PickerOptions = {
+      cssClass:'wastePicker',
+      buttons: [
+        {
+        text: 'Cancel',
+        role: 'cancel'
+        },
+        {
+          text: 'Done',
+          role: 'done',
+          cssClass: 'special-done'
+        }
+      ],
+      columns: [
+        {
+          name: 'Type',
+          options: [
+            {text: 'Plastic', value: 'plastic'},
+            {text: 'Mixed Paper / Cardboard', value: 'paper'},
+            {text: 'Glass', value: 'glass'},
+            {text: 'Metals', value: 'metals'},
+            {text: 'Others', value: 'others'}
 
+          ]
+        }
+      ]
+    };
+    let picker = await this.pickerCtrl.create(opts);
+    picker.present();
+    picker.onDidDismiss().then(async data => {
+      let col = await picker.getColumn('Type');
+      this.quickAdd.get('wasteType').setValue(col.options[col.selectedIndex].value);
+    })
+  }
   async showPicker() {
     let opts: PickerOptions = {
       cssClass:'wastePicker',
@@ -135,13 +200,15 @@ export class AddManualPage implements OnInit {
         {
           name: 'Material',
           options: [
-            {text: 'P 1: PET', value: 'PETE'},
-            {text: 'P 2: HDPE', value: 'HDPE'},
-            {text: 'P 3: PVC', value: 'PVC'},
-            {text: 'P 4: LDPE', value: 'LDPE'},
-            {text: 'P 5: PP', value: 'PP'},
-            {text: 'P 6: PS', value: 'PS'},
-            {text: 'P 7: OTHER', value: 'OTHER'}
+            {text: 'Plastic 1: PET', value: 'PETE'},
+            {text: 'Plastic 2: HDPE', value: 'HDPE'},
+            {text: 'Plastic 3: PVC', value: 'PVC'},
+            {text: 'Plastic 4: LDPE', value: 'LDPE'},
+            {text: 'Plastic 5: PP', value: 'PP'},
+            {text: 'Plastic 6: PS', value: 'PS'},
+            {text: 'Plastic 7: OTHER', value: 'OTHER'},
+            {text: 'Plastic 1: PET', value: 'PETE'},
+
           ]
         }
       ]
@@ -153,6 +220,7 @@ export class AddManualPage implements OnInit {
       this.quickAdd.get('wasteMaterial').setValue(col.options[col.selectedIndex].value);
     })
   }
+
 }
 
 // Pages include waste summary page, product information page, settings page.

@@ -35,11 +35,11 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'Add-Manual',
+        path: 'Map',
         children: [
           {
             path: '',
-            loadChildren: () => import('../add-manual/add-manual.module').then( m => m.AddManualPageModule)
+            loadChildren: () => import('../map/map.module').then( m => m.MapPageModule)
           }
         ]
       }

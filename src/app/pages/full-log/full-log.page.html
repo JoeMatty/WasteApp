@@ -1,11 +1,13 @@
+
 <ion-header>
   <ion-toolbar color="primary">
+    <img slot="start" class="headimg" src="../../../assets/imgs/PinClipart.com_garbage-bag-clipart_1656157.png">
+    <ion-title slot="center"> View Your Log  </ion-title>
     <ion-buttons slot="end">
       <ion-button slot="end" (click)="loadWasteLogs()">
         <ion-icon slot="icon-only" name="refresh"></ion-icon>
       </ion-button>
-    </ion-buttons>
-    <ion-title>View Your Log  </ion-title>
+    </ion-buttons>   
   </ion-toolbar>
 </ion-header>
 
@@ -18,25 +20,31 @@
       refreshingText="Refreshing...">
     </ion-refresher-content>
   </ion-refresher>
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
- 
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort matSortActive="formattedDate" matSortDirection="desc">
+    
     <ng-container matColumnDef="wastename">
       <th mat-header-cell *matHeaderCellDef>Waste</th>
-      <td mat-cell *matCellDef="let log"> {{log.wastename}} </td>
+      <td (click) = "openModal(log)" mat-cell *matCellDef="let log"> {{log.wastename}} </td>
     </ng-container>
  
     <ng-container matColumnDef="wastetype">
       <th mat-header-cell *matHeaderCellDef>Type</th>
-      <td mat-cell *matCellDef="let log"> {{log.wastetype}} </td>
+      <td (click) = "openModal(log)" mat-cell *matCellDef="let log"> {{log.wastetype}} </td>
     </ng-container>
  
-    <ng-container matColumnDef="date">
+    <ng-container matColumnDef="formattedDate">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
-      <td mat-cell *matCellDef="let log"> {{log.logdate.getDay()}}/{{log.logdate.getMonth()}}/{{log.logdate.getFullYear()}} </td>
+      <td (click) = "openModal(log)" mat-cell *matCellDef="let log"> {{log.formattedDate}} </td>
     </ng-container>
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Type</th>
-      <td mat-cell *matCellDef="let log"> <ion-button (click) = "openModal(log)" color="secondary" expand="block"size="small">View</ion-button> </td>
+    <ng-container matColumnDef="symbol">
+      <th mat-header-cell *matHeaderCellDef>Recycled?</th>
+      <td (click) = "openModal(log)" mat-cell *matCellDef="let log"> 
+        <div *ngIf="log.wasrecycled; then recycleBlock; else notRecBlock"></div>
+        
+        <ng-template #recycleBlock><img class="displayImg" src="../../../assets/imgs/download.png"></ng-template>
+        <ng-template #notRecBlock><img class="displayImg" src="../../../assets/imgs/backWasteSym.png"></ng-template>
+       
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

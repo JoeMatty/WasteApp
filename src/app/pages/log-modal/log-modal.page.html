@@ -1,47 +1,54 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>logModal</ion-title>
-    <ion-buttons slot="end">
-      <ion-button  (click)="closeModal()">
-        <ion-icon slot="icon-only" name="close"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+
+
 <ion-content>
-  <ion-item-group>
-    <ion-item-divider>
-      <ion-label>Log Info</ion-label>
-    </ion-item-divider>
-    <ion-item>
-      <ion-label>{{log.id}}</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>{{log.logdate}}</ion-label>
-    </ion-item>
-    <ion-item-divider>
-      <ion-label>Product Type</ion-label>
-    </ion-item-divider>
-    <ion-item>
-      <ion-label>{{log.wastename}}</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>{{log.wastetype}}</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>{{log.wastematerial}}</ion-label>
-    </ion-item>
-    <ion-item-divider>
-      <ion-label>Log Description</ion-label>
-    </ion-item-divider>
-    <ion-item>
-      <ion-label>{{log.wasrecycled}}</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>{{log.necessary}}</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>{{log.wasteNotes}}</ion-label>
-    </ion-item>
-  </ion-item-group>
+  <ion-card >
+    <ion-card-header class="ion-no-margin ion-no-padding" color = "primary">
+        <ion-button  (click)="closeModal()">
+          <ion-icon slot="icon-only" name="close"></ion-icon>
+        </ion-button>
+        
+          <ion-button (click)="databaseService.deleteWasteLog(log)" color = "danger" >
+            <ion-icon  name="trash"></ion-icon>
+          </ion-button>
+   
+      </ion-card-header>
+    <img src="../../../assets/imgs/{{headImage}}">
+    <ion-card-header >
+      <ion-card-subtitle>{{log.wastetype}}&nbsp;&nbsp;&nbsp;&nbsp; {{formattedD}} - {{formattedT}}</ion-card-subtitle>
+      <ion-card-title>{{log.wastename}}</ion-card-title>
+    
+    </ion-card-header>
+  
+    <ion-card-content>
+        <ion-text>Material Material: </ion-text>{{log.wastematerial}}
+        <br>
+        <ion-label>Amount: </ion-label>{{formattedAmount}}
+        <br>
+        <ion-label>Material: </ion-label>{{log.wasteMaterial}}
+        <br>
+        <ion-label>Notes: </ion-label>{{log.wasteNotes}}
+        <br>
+        
+
+        
+      
+    </ion-card-content>
+            
+            <div *ngIf= "log.wasrecycled == true">
+                <ion-item color="primary" lines="none" class="ion-justify-content-center">
+                  <ion-label slot = "start"  class="ion-text-wrap">This item was recycled!</ion-label>
+                  <img class="imgLog" src="../../../assets/imgs/earthLove.png">
+                    
+                </ion-item>  
+            </div>
+            <div *ngIf= "log.wasrecycled == false">
+              <ion-item color="danger" lines="none" class="ion-justify-content-center">
+                <ion-label slot = "start" class="ion-text-wrap">This item was not recycled</ion-label>
+                <img class="imgLog" src="../../../assets/imgs/trash.png">
+              </ion-item>  
+            </div>
+      
+    
+  </ion-card>
+
 </ion-content>

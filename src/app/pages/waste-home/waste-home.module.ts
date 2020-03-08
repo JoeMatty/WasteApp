@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { WasteHomePageRoutingModule } from './waste-home-routing.module';
 
 import { WasteHomePage } from './waste-home.page';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    WasteHomePageRoutingModule
+    WasteHomePageRoutingModule,
+    FontAwesomeModule
   ],
   declarations: [WasteHomePage]
 })

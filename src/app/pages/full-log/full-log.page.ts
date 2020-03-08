@@ -2,8 +2,8 @@ import { Component, OnInit,ViewChild  } from '@angular/core';
 import { DatabaseService, Log } from 'src/app/services/database.service';
 import { MatPaginator, MatTableDataSource, MatSort,MatButton } from '@angular/material';
 import { LogModalPage } from '../log-modal/log-modal.page'
-import { ModalController, LoadingController } from '@ionic/angular';
-
+import { ModalController, LoadingController, ToastController } from '@ionic/angular';
+import { compareAsc, format } from 'date-fns'
 @Component({
   selector: 'app-full-log',
   templateUrl: './full-log.page.html',
@@ -11,20 +11,23 @@ import { ModalController, LoadingController } from '@ionic/angular';
 })
 export class FullLogPage implements OnInit {
 
-  constructor(private databaseService: DatabaseService, private modalCtrl: ModalController, private loadingController:LoadingController) { }
+  constructor(private databaseService: DatabaseService, private modalCtrl: ModalController, private loadingController:LoadingController,
+              private toastController: ToastController) { }
+              
   wasteLogs:  Log[] = [];
-  displayedColumns: string[] = ['wastename', 'wastetype', 'date','actions'];
-  dataSource = new MatTableDataSource<Log>([]);
-  testData: Log[] = [{
+  displayedColumns: string[] = ['symbol','wastename', 'wastetype', 'formattedDate'];
+  dataSource = new MatTableDataSource<any>([]);
+  testData: any[] = [{
     id : 1,
     wastename: "Coca Cola",
     wasteamount: 1,
     wastetype: "Bottle",
     wastematerial: "PET",
-    wasrecycled: true,
+    wasrecycled: false,
     necessary: "a",
     wasteNotes: "Was bought on the weekend at the beach",
-    logdate: new Date("2013-12-09 17:22:00.000")
+    logdate: new Date("2013-12-09 17:22:00.000"),
+    formattedDate: "09-12-2013"
   },
   {
     id : 2,
@@ -32,10 +35,57 @@ export class FullLogPage implements OnInit {
     wasteamount: 1,
     wastetype: "Bag",
     wastematerial: "HDPE",
-    wasrecycled: false,
+    wasrecycled: true,
     necessary: "m",
     wasteNotes: "Needed a bag, will be reused",
-    logdate: new Date("2017-12-09T12:22:00.000Z")
+    logdate: new Date("2017-12-09T12:22:00.000Z"),
+    formattedDate: "12-12-2013"
+  },{
+    id : 3,
+    wastename: "Coca Cola",
+    wasteamount: 1,
+    wastetype: "Bottle",
+    wastematerial: "PET",
+    wasrecycled: false,
+    necessary: "a",
+    wasteNotes: "Was bought on the weekend at the beach",
+    logdate: new Date("2013-12-09 17:22:00.000"),
+    formattedDate: "01-01-2014"
+  },
+  {
+    id : 4,
+    wastename: "Shop Bag",
+    wasteamount: 1,
+    wastetype: "Bag",
+    wastematerial: "HDPE",
+    wasrecycled: true,
+    necessary: "m",
+    wasteNotes: "Needed a bag, will be reused",
+    logdate: new Date("2017-12-09T12:22:00.000Z"),
+    formattedDate: "09-08-2013"
+  },{
+    id : 5,
+    wastename: "Coca Cola",
+    wasteamount: 1,
+    wastetype: "Bottle",
+    wastematerial: "PET",
+    wasrecycled: false,
+    necessary: "a",
+    wasteNotes: "Was bought on the weekend at the beach",
+    logdate: new Date("2013-12-09 17:22:00.000"),
+    formattedDate: "21-02-2014"
+  },
+  {
+    id : 6,
+    wastename: "Shop Bag",
+    wasteamount: 1,
+    wastetype: "Bag",
+    wastematerial: "HDPE",
+    wasrecycled: true,
+    necessary: "m",
+    wasteNotes: "Needed a bag, will be reused",
+    logdate: new Date("2017-12-09T12:22:00.000Z"),
+    formattedDate: "23-08-2013"
   }]
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -51,14 +101,29 @@ export class FullLogPage implements OnInit {
     this.dataSource.sort = this.sort;
     //DEBUG DELETE
     this.dataSource.data = this.testData;
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      console.log("item: " + JSON.stringify(item) + "property :" + property)
+      switch (property) {
+        case  "formattedDate": return item.logdate;
+        default: console.log("default"); return item[property];
+      }
+    };
+    
     //
   
     this.databaseService.getDataBaseState().subscribe(rdy => {
       this.databaseState = rdy;
       if (rdy) {
         this.databaseService.getbevWasteLogs().subscribe(logs => {
-          this.dataSource.data = logs;
-          
+          let displayLogs = [];
+          displayLogs = logs;
+
+          for(let log of displayLogs){
+           
+              log.wasrecycled = Boolean(String(log.wasrecycled) == "true");
+              log.formattedDate = format(log.logdate,'dd-MM-yyyy')
+          }
+          this.dataSource.data = displayLogs;
           
         })
       }
@@ -81,17 +146,30 @@ export class FullLogPage implements OnInit {
       event.target.complete();  
     }, 500);  
   }  
-
+  deleteLog(log) {  
+ 
+    this.databaseService.deleteWasteLog(log).then((data => {
+      if(data == 200){
+        this.presentToast();
+        this.loadWasteLogs()
+      }
+    }))
+  }  
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: 'Log has been removed.',
+      duration: 2000,
+      color: "success"
+    });
+    toast.present();
+  }
   loadWasteLogs() {
-    alert("try to refresh")
+    
     this.databaseService.loadWasteLogs().then(res => {
       
     }).catch(() => {
       this.debug = "failed to load";
     });
-  }
-  DelWasteLogs() {
-    this.databaseService.deleteTemp();
   }
   async presentLoadingWithOptions() {
     const loading = await this.loadingController.create({
@@ -105,11 +183,13 @@ export class FullLogPage implements OnInit {
     return await loading.present();
   }
   async openModal(log) {
-    console.log(log);
+    
     const modal = await this.modalCtrl.create({
       component: LogModalPage,
       componentProps: {log}
     });
-    return await modal.present();
+    await modal.present();
+    this.loadWasteLogs();
+    return await modal.onDidDismiss;
   }
 }

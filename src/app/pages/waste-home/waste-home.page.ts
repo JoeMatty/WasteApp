@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AddWasteService } from './../../services/add-waste.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { ToastController, ModalController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
+import { AddPopComponent } from '../../popover/add-pop/add-pop.component';
+import { Chart } from 'chart.js';
+import { subWeeks } from 'date-fns'
 
 @Component({
   selector: 'app-waste-home',
@@ -10,25 +14,98 @@ import { ToastController, ModalController } from '@ionic/angular';
   styleUrls: ['./waste-home.page.scss'],
 })
 export class WasteHomePage implements OnInit {
+  @ViewChild('pieChart',{static: false}) pieChart;
+
   wasteLogModal = null;
   wasteTotal = 32;
   wasteLogs = [];
+  wasteNotRecycled= 0;
+  wasteRecycled=0;
+  databaseState;
+  
+  wasteAmounts = [0,0,0,0,0]
+
   constructor(private router: Router, private addWasteService: AddWasteService,private databaseService: DatabaseService,
-    private modalCtrl: ModalController ,private toastctrl: ToastController) { 
+    private modalCtrl: ModalController ,private toastctrl: ToastController, private popCtrl: PopoverController) { 
     
   }
+  createBarChart() {
+    this.pieChart = new Chart(this.pieChart.nativeElement, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+            label: 'Waste Percentages',
+            data: this.wasteAmounts,
+            backgroundColor: [
+                '#910101',
+                '#0124bd',
+                '#1ec28b',
+                '#aaaaaa',
+                '#252424',
+            ],
 
+            borderWidth: 0
+        }]
+    }
+    });
+  }
   ngOnInit() {
     
-  }
-  ionViewDidEnter(){
-    console.log("Ion view entered");
     this.databaseService.getDataBaseState().subscribe(rdy => {
+      this.databaseState = rdy;
       if(rdy){
-        console.log("ready");
+        
+
+        this.databaseService.getbevWasteLogs().subscribe(logs => {
+          
+          alert("starting loop : " + logs.length)
+          for(let log of logs){
+            if(log.wastetype === "plastic"){
+              this.wasteAmounts[0] += 0;
+            }
+            if(log.wastetype === "paper"){
+              this.wasteAmounts[1] += 1;
+            }
+            if(log.wastetype === "glass"){
+              this.wasteAmounts[2] += 1;
+            }
+            if(log.wastetype === "metal"){
+              this.wasteAmounts[3] += 1;
+            }
+            if(log.wastetype === "other"){
+              this.wasteAmounts[4] += 1;
+            }
+            //Check if recycled
+            if(String(log.wasrecycled) == "true"){
+              this.wasteRecycled++;
+            }else{
+              this.wasteNotRecycled++;
+            }
+          }
+          if(logs.length > 0){
+            this.createBarChart();
+          }
+            
+        })
+        
       }
     });
-    console.log("Ion view entered");
+  }
+  ionViewDidEnter(){
+    
+    if(this.databaseState){
+      this.databaseService.loadWasteLogs()
+      
+ }
+  }
+
+  async presentPopover(ev: any) {
+    const popover = await this.popCtrl.create({
+      component: AddPopComponent,
+      event: ev,
+      translucent: true
+    });
+    return await popover.present();
   }
 
   //tempory functions using local ionic variable
@@ -44,25 +121,7 @@ export class WasteHomePage implements OnInit {
       modal.present();
       this.wasteLogModal = modal;
     });
-    
-    // this.wasteLogModal.onDidDismiss(data=>{
-    //   if (data && data.reload) {
-    //     let toast = this.toastctrl.create({
-    //       message: 'New Log Added',
-    //       duration: 2000,
-    //       color: 'success'
-    //     })
-    //     this.loadWasteLogs();
-    //   }
-    //   else{
-    //     let toast = this.toastctrl.create({
-    //       message: 'Log has not been added',
-    //       duration: 2000,
-    //       color: 'failure'
-    //     })        
-    //     this.loadWasteLogs();
-    //   }
-    // });
+
   }
 
 }

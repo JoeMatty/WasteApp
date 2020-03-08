@@ -1,16 +1,20 @@
 .add-box{
-    margin: 1em;
+    margin-top: 1em;
     padding: 1em;
     margin-top: 3vh;
     background: #ffffff;
-    border-radius: 15px;
-    border: 2px solid var(--ion-color-primary);
+    border-radius: 0px;
+    border: 1px solid var(--ion-color-primary);
 }
 ion-content{
-  
+    --background: none;
     background-position: center top;
     background-repeat: no-repeat;
     background-size: cover;
+    background-image: url("../../../assets/imgs/Lake.png");
+}
+.amountInput{
+    max-width: 130px;
 }
 .wasteImg{
     height: 50px;

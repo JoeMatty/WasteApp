@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 import { SQLitePorter } from '@ionic-native/sqlite-porter/ngx';
-import { Platform } from '@ionic/angular';
+import { Platform, NavController } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import {  format } from 'date-fns'
 
 /*
 wastename -
@@ -34,6 +35,7 @@ export class DatabaseService {
   private databaseReady: BehaviorSubject<boolean>; //This varaible true when the db is open and readyt for commands
 
   bevWasteLogs = new BehaviorSubject([]);
+  bevTimeLogs = new BehaviorSubject([]);
 
   resultString = "empty"
   setupString = "empty"
@@ -74,11 +76,12 @@ export class DatabaseService {
   addWasteLog(wastename,wasteamount,wastetype,waste_material,was_recycled,is_necessary,waste_notes,log_date:Date){
     
     // let data = [wastename,wastetype,wasteamount]
-
+    let formattedDate = format(log_date, "yyyy-MM-dd HH:mm:ss.SSS")
+    
     return this.db.executeSql('INSERT into log (waste_name, waste_amount, waste_type, waste_material, was_recycled, is_necessary, waste_notes,log_date) VALUES (?,?,?,?,?,?,?,?)', 
-      [wastename,wasteamount,wastetype,waste_material,was_recycled,is_necessary,waste_notes,log_date.toISOString()]).then((data) =>{
+      [wastename,wasteamount,wastetype,waste_material,was_recycled,is_necessary,waste_notes,formattedDate]).then((data) =>{
         this.loadWasteLogs();
-        alert("added");
+        
       }).catch((err) =>{
         alert("failed to add");
     })
@@ -95,13 +98,68 @@ export class DatabaseService {
       result.wasrecycled = data.rows.item(0).was_recycled;
       result.necessary = data.rows.item(0).is_necessary;
       result.wasteNotes = data.rows.item(0).waste_notes;    
-      alert(data.rows.item(0).log_date);
       result.logdate = new Date(data.rows.item(0).log_date);
           
       return result;
       
     })
    
+  }
+  getTodayLog(date: Date){
+
+    let inDate = format(date, 'yyyy-MM-dd');
+   
+    return this.db.executeSql('SELECT * FROM log WHERE date(log_date) = date(?)', [inDate]).then(data =>{
+      let result= [];
+      
+      if (data.rows.length > 0){
+        
+        try{
+          for (let i = data.rows.length; i >= 0; i--){
+            let log =    
+              {
+              id: data.rows.item(i).id,
+              wastename : data.rows.item(i).waste_name,
+              wasteamount : data.rows.item(i).waste_amount,
+              wastetype : data.rows.item(i).waste_type,
+              wastematerial : data.rows.item(i).waste_material,
+              wasrecycled : <Boolean>data.rows.item(i).was_recycled,
+              necessary : data.rows.item(i).is_necessary,
+              wasteNotes : data.rows.item(i).waste_notes, 
+              logdate : new Date(data.rows.item(i).log_date)
+              }    
+              
+              result.push(log);
+          }
+        }catch(err){
+          alert("err found : " + err); 
+        }
+      }else{
+        alert("no results ");
+      }
+      this.bevTimeLogs.next(result);
+    })
+   
+  }
+  deleteWasteLog(log: Log){
+    let serverLog: Log
+    
+    // this.getWasteLog(log.id).then(data => {
+    //   serverLog = data;
+    // })
+    // if(serverLog.id == log.id && serverLog.wastename == log.wastename){
+      return this.db.executeSql('DELETE FROM log WHERE id = ?',[log.id]).then(data =>{
+        alert("Record Deleted")
+        return 200
+      }).catch((err) =>{
+        alert("Failed to delete")
+      });
+    // }
+    // else{
+    //   alert("delete Log doesnt match Database log");
+    //   return "Requested Log id did not match database";
+    // }
+    
   }
   loadWasteLogs(){
     return this.db.executeSql('SELECT * FROM log', []).then(data =>{
@@ -111,6 +169,8 @@ export class DatabaseService {
         
         try{
           for (let i =0; i < data.rows.length; i++){
+           
+            
             let log =    
               {
               id: data.rows.item(i).id,
@@ -118,7 +178,7 @@ export class DatabaseService {
               wasteamount : data.rows.item(i).waste_amount,
               wastetype : data.rows.item(i).waste_type,
               wastematerial : data.rows.item(i).waste_material,
-              wasrecycled : data.rows.item(i).was_recycled,
+              wasrecycled : new Boolean(data.rows.item(i).was_recycled),
               necessary : data.rows.item(i).is_necessary,
               wasteNotes : data.rows.item(i).waste_notes, 
               logdate : new Date(data.rows.item(i).log_date)
@@ -137,6 +197,9 @@ export class DatabaseService {
   }
   getbevWasteLogs(): Observable<Log[]> {
     return this.bevWasteLogs.asObservable();
+  }
+  getbevTimeLogs(): Observable<Log[]> {
+    return this.bevTimeLogs.asObservable();
   }
   deleteTemp() {
     return this.db.executeSql('DELETE * FROM logs', []).then(_ => {
