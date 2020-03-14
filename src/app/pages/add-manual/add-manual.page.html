@@ -20,32 +20,54 @@
       </ion-segment-button>
       
     </ion-segment>
+
   </ion-toolbar>
+  <ion-toolbar  >
+    <ion-searchbar
+          showcancelbutton=""
+          (ionInput)="FilterDefaultData($event)"
+    ></ion-searchbar>
+  </ion-toolbar>
+  
 </ion-header>
 
 <div *ngIf = "!name; else forminfo"></div>
 
   <ion-content>
-    <ion-slides #slides (ionSlideDidChange)="slideChanged()" scrollbar="true">  
+    <ion-slides #slides  (ionSlideWillChange)="slideChanged()" scrollbar="true">  
       <ion-slide>
-        
-        <mat-form-field class="example-full-width">
-          <mat-label>Favorite food</mat-label>
-          <input matInput placeholder="Ex. Pizza" value="Sushi">
-        </mat-form-field>
+        <div class="quickaddbox">
+    
+      
+          <ion-item-sliding  (click) = "presentPopover($event,item)"  class= "defaultItem" *ngFor="let item of defaultWaste"> 
+            <ion-item >
+              <ion-label>{{ item.wastename }}</ion-label>
+              <ion-icon name="add-circle" color = "primary"></ion-icon>
+            </ion-item>
+            <ion-item-options side="end">
+              <ion-item-option color="primary" expandable>
+                Add
+              </ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
+     
+       
+      </div>
       </ion-slide>  
       <ion-slide>
-       
-        <ion-label  position="stacked">Click To Scan!</ion-label>
-        <ion-button expand="block" class="ion-no-margin" (click) = "scanBarcode()">scan</ion-button>
-      
+        <div class="cam-add-box">
+          <ion-label  position="stacked">Click To Scan!</ion-label>
+          <ion-button expand="block" class="ion-no-margin" (click) = "scanBarcode()">scan</ion-button>
+        </div>
         
       </ion-slide>  
       <ion-slide>
         <form [formGroup]="quickAdd" (ngSubmit)="processForm()"> 
           <div class="add-box">
+            <div class="head">
+              <ion-text>Waste Info</ion-text>
+            </div>
           
-            <ion-text>Waste Info</ion-text>
 
     
               <ion-item>
@@ -69,33 +91,32 @@
                   <ion-datetime displayFormat="HH:mm" formControlName="logTime"></ion-datetime>
                 </ion-item>
               </ion-item>
+              <ion-item>
+                <ion-checkbox  color="secondary" checked slot="start" formControlName="wasRecycled"></ion-checkbox>
+                <ion-label >Waste Recycled</ion-label>
+              </ion-item>
 
             </div>
               <div class="add-box">
-                Waste Materials
+                <div class="head">
+                  <ion-text>Waste Material</ion-text>
+                </div>
+                
                 <ion-item >
                   <ion-label class="input-label" position="stacked">Waste Type <ion-text color="danger">*</ion-text> </ion-label>
                   <ion-input  (click) = "showTimePicker()" type="text" readonly = "true" formControlName="wasteType" ></ion-input>
                  
                 </ion-item>
                 <ion-item>
-                  <ion-label position="stacked">Waste Material <ion-text color="danger">*</ion-text> </ion-label>
-                  <ion-input class="input-label" (click) = "showPicker()" type="text" readonly = "true" formControlName="wasteMaterial" ><img class="wasteImg" src="../../../assets/imgs/PET1large.svg"></ion-input>
+                  <ion-label class="input-label"position="stacked">Waste Material <ion-text color="danger">*</ion-text> </ion-label>
+                  <ion-input  (click) = "showPicker()" type="text" readonly = "true" formControlName="wasteMaterial" ><img class="wasteImg" src="../../../assets/imgs/PET1large.svg"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label  class="input-label" position="stacked">Extra Notes <ion-text color="danger">*</ion-text> </ion-label>
+                  <ion-textarea rows="2" type="text" formControlName="wasteNotes"></ion-textarea>
                 </ion-item>
               </div>
 
-              <ion-item>
-                <ion-checkbox  color="secondary" checked slot="start" formControlName="wasRecycled"></ion-checkbox>
-                <ion-label >Waste Recycled</ion-label>
-              </ion-item>
-
-
-              <ion-item>
-                <ion-label  class="input-label" position="stacked">Extra Notes <ion-text color="danger">*</ion-text> </ion-label>
-                <ion-textarea rows="2" type="text" formControlName="wasteNotes"></ion-textarea>
-              </ion-item>
-            
-            
             <div class="ion-padding">
               <ion-button expand="block" type="submit" class="ion-no-margin" [disabled]="!quickAdd.valid"> Submit </ion-button>
             </div>

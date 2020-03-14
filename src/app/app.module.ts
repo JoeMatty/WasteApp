@@ -24,6 +24,7 @@ import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 import { PopoverController } from '@ionic/angular';
 import { AddPopComponent } from './popover/add-pop/add-pop.component';
 
+
 library.add(fab);
 
 @NgModule({

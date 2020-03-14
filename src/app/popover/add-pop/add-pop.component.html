@@ -1,13 +1,7 @@
-<ion-content>
-  <ion-list>
-    <ion-item routerLink="/tabs/Add-Manual" routerDirection="forward">
-      Quick add
-    </ion-item>
-    <ion-item routerLink="/tabs/Add-Manual" routerDirection="forward">
-      Manual add
-    </ion-item>
-    <ion-item routerLink="/tabs/Add-Manual" routerDirection="forward">
-      Scan Barcode
-    </ion-item>
-  </ion-list>
-</ion-content>
+
+  <div class="add-box">
+    <ion-text class="summaryHead">Quick add a {{item.wastename}}</ion-text>
+    <ion-button expand="block"  (click)="confirm()" >
+      Add
+    </ion-button>
+  </div>

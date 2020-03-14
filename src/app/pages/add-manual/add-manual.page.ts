@@ -1,15 +1,17 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { AddWasteService } from './../../services/add-waste.service';
 import { Router } from '@angular/router';
 import { FormBuilder, Validators} from '@angular/forms';
 import { DatabaseService } from 'src/app/services/database.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { ToastController, PickerController,IonDatetime, NavController, IonSlides } from '@ionic/angular';
+import { ToastController, PickerController,IonDatetime, NavController, IonSlides, PopoverController, IonItemSliding } from '@ionic/angular';
 import { PickerOptions } from '@ionic/core';
 import { ProductapiService } from 'src/app/services/productapi.service';
 import { WasteHomePage } from '../waste-home/waste-home.page';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { isThisISOWeek } from 'date-fns';
+import { AddPopComponent } from '../../popover/add-pop/add-pop.component';
 @Component({
   selector: 'app-add-manual',
   templateUrl: './add-manual.page.html',
@@ -18,6 +20,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 export class AddManualPage implements OnInit {
 
   @ViewChild('slides', { static: true }) slider: IonSlides;  
+  @ViewChild('itemslide', {static: true}) itemslider: IonItemSliding;
   segment = 0;  
   result = null;
   newAmount: number = 0;
@@ -27,7 +30,8 @@ export class AddManualPage implements OnInit {
   category = 0;
   testString: string = "empt";
   testString2: string = "-";
-
+  displayDefaultWaste:any[];
+  defaultWaste:any[]; 
   quickAdd = this.formBuilder.group({
     'wasteName': ['', Validators.required],
     'wasteAmount': ['1', Validators.required],
@@ -42,18 +46,87 @@ export class AddManualPage implements OnInit {
 
   constructor(private formBuilder: FormBuilder, private router: Router, private addWasteService: AddWasteService,
      private databaseService: DatabaseService, private barcodeScanner: BarcodeScanner, private toastController: ToastController,
-     private productService: ProductapiService, private pickerCtrl: PickerController, public navCtrl: NavController) { 
+     private productService: ProductapiService, private pickerCtrl: PickerController, public navCtrl: NavController,
+     private popCtrl: PopoverController) { 
   }
 
   ngOnInit() {
-    
-  }
+    this.defaultWaste;
+    this.initialiseDefaultData()
+  } 
   ionViewDidEnter(){
     //Finds the current Date/Time and sets it as the default value in the Log time form option
 
     this.quickAdd.get('logTime').setValue(this.dateInit.toISOString());
     this.quickAdd.get('logDate').setValue(this.dateInit.toISOString());
     
+  }
+  initialiseDefaultData(){
+    this.defaultWaste = [
+      {
+        wastename: "Carton",
+        wasteType: "MixedPaper",
+        wasteMaterial: "21"
+      },
+      {
+        wastename: "Green Bottle",
+        wasteType: "Glass",
+        wasteMaterial: "72"
+      },
+      {
+        wastename: "Brown Bottle",
+        wasteType: "Glass",
+        wasteMaterial: "70"
+      },
+      {
+        wastename: "Clear Bottle",
+        wasteType: "Glass",
+        wasteMaterial: "71"
+      },
+      {
+        wastename: "Glass Jar",
+        wasteType: "Glass",
+        wasteMaterial: "71"
+      },
+      {
+        wastename: "Drink Can",
+        wasteType: "Metals",
+        wasteMaterial: "41"
+      },
+      {
+        wastename: "Carrier Bag",
+        wasteType: "Plastic",
+        wasteMaterial: "02"
+      },
+      {
+        wastename: "Tin Can",
+        wasteType: "Metals",
+        wasteMaterial: "41"
+      },
+      {
+        wastename: "Drink Bottle",
+        wasteType: "Plastics",
+        wasteMaterial: "02"
+      },
+      {
+        wastename: "Shower Bottle",
+        wasteType: "Plastics",
+        wasteMaterial: "02"
+      }
+    ];
+  }
+  FilterDefaultData(ev:any){
+    this.initialiseDefaultData();
+    const val = ev.target.value;
+    console.log("called " + val);
+    if(val && val.trim() != ''){
+      console.log("passed this");
+      this.defaultWaste = this.defaultWaste.filter((item) => {
+          return (item.wastename.toLowerCase().indexOf(val.toLowerCase())> -1 )
+         // return (item.wastename.toLowerCase().indexof(val.toLowerCase())> -1)
+      } )
+      console.log("passed "+ JSON.stringify(this.defaultWaste));
+    }
   }
   manualBarcode(){
       this.productService.searchData(5010459005018).subscribe(result => {
@@ -100,6 +173,24 @@ export class AddManualPage implements OnInit {
       color: "success"
     });
     toast.present();
+  }
+  async presentPopover(ev: any,item: any) {
+
+    const popover = await this.popCtrl.create({
+      component: AddPopComponent,
+      componentProps: {
+          "item": item
+      },
+      event: ev,
+      
+      translucent: true
+    });
+    popover.onDidDismiss().then((dataReturned) => {
+      if(dataReturned !== null){
+          console.log(dataReturned);
+      }
+    })
+    return await popover.present();
   }
   handleWasteAmount(amount){
     this.addWasteService.addWasteTotal(1).then(() => {

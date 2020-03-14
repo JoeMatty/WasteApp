@@ -117,7 +117,6 @@ export class FullLogPage implements OnInit {
         this.databaseService.getbevWasteLogs().subscribe(logs => {
           let displayLogs = [];
           displayLogs = logs;
-
           for(let log of displayLogs){
            
               log.wasrecycled = Boolean(String(log.wasrecycled) == "true");

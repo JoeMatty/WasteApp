@@ -10,8 +10,8 @@ import { MatInputModule } from '@angular/material';
 
 @NgModule({
   imports: [
-    CommonModule,
     FormsModule,
+    CommonModule,
     ReactiveFormsModule,
     IonicModule,
     MatCheckboxModule,

@@ -178,7 +178,7 @@ export class DatabaseService {
               wasteamount : data.rows.item(i).waste_amount,
               wastetype : data.rows.item(i).waste_type,
               wastematerial : data.rows.item(i).waste_material,
-              wasrecycled : new Boolean(data.rows.item(i).was_recycled),
+              wasrecycled : <Boolean> data.rows.item(i).was_recycled,
               necessary : data.rows.item(i).is_necessary,
               wasteNotes : data.rows.item(i).waste_notes, 
               logdate : new Date(data.rows.item(i).log_date)

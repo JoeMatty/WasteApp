@@ -17,13 +17,14 @@ export class WasteHomePage implements OnInit {
   @ViewChild('pieChart',{static: false}) pieChart;
 
   wasteLogModal = null;
-  wasteTotal = 32;
+  wasteTotal = 0;
   wasteLogs = [];
-  wasteNotRecycled= 0;
+  totalPerRec = 0;
   wasteRecycled=0;
   databaseState;
   
   wasteAmounts = [0,0,0,0,0]
+  wastePercentages = [0,0,0,0,0]
 
   constructor(private router: Router, private addWasteService: AddWasteService,private databaseService: DatabaseService,
     private modalCtrl: ModalController ,private toastctrl: ToastController, private popCtrl: PopoverController) { 
@@ -58,31 +59,45 @@ export class WasteHomePage implements OnInit {
 
         this.databaseService.getbevWasteLogs().subscribe(logs => {
           
-          alert("starting loop : " + logs.length)
+          this.wasteTotal = logs.length;
+
           for(let log of logs){
-            if(log.wastetype === "plastic"){
-              this.wasteAmounts[0] += 0;
+            if(log.wastetype.search("Plastic")){
+              this.wasteAmounts[0] += 1;
             }
             if(log.wastetype === "paper"){
-              this.wasteAmounts[1] += 1;
+                this.wasteAmounts[1] += 1;
             }
             if(log.wastetype === "glass"){
-              this.wasteAmounts[2] += 1;
+                this.wasteAmounts[2] += 1;
             }
-            if(log.wastetype === "metal"){
-              this.wasteAmounts[3] += 1;
+            if(log.wastetype === "metals"){
+                this.wasteAmounts[3] += 1;
             }
-            if(log.wastetype === "other"){
-              this.wasteAmounts[4] += 1;
+            if(log.wastetype === "others"){
+                this.wasteAmounts[4] += 1;
             }
             //Check if recycled
-            if(String(log.wasrecycled) == "true"){
+            if(Boolean(String(log.wasrecycled) == "true")){
               this.wasteRecycled++;
-            }else{
-              this.wasteNotRecycled++;
             }
           }
+
+          
+          for(let i = 0; i < this.wastePercentages.length; i++){
+            let wasteAmount = this.wasteAmounts[i];
+            if(wasteAmount > 0 ){
+                this.wastePercentages[i] =  wasteAmount/this.wasteTotal * 100;
+            }else{
+              this.wastePercentages[i] = 0;
+            }
+          }
+          if(this.wasteRecycled > 0 ){
+            this.totalPerRec = this.wasteRecycled / this.wasteTotal * 100;
+          }
           if(logs.length > 0){
+            
+            
             this.createBarChart();
           }
             

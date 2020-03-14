@@ -1,8 +1,27 @@
 .add-box{
-    margin-top: 1em;
-    padding: 1em;
+    margin-top: 0em;
+    padding: 0em;
     margin-top: 3vh;
     background: #ffffff;
+    border-radius: 0px;
+    border: 1px solid var(--ion-color-primary);
+}
+.cam-add-box{
+    margin: 30px;
+    padding: 1em;
+    width: 90%;
+    margin-top: 3vh;
+    background: #ffffff;
+    border-radius: 0px;
+    border: 1px solid var(--ion-color-primary);
+}
+.quickaddbox{
+    margin-top: 0em;
+    padding: 0em;
+    width: 90%;
+    margin-top: 0vh;
+    background: #ffffff;
+    opacity: 0.8;
     border-radius: 0px;
     border: 1px solid var(--ion-color-primary);
 }
@@ -15,6 +34,23 @@ ion-content{
 }
 .amountInput{
     max-width: 130px;
+}
+.defaultItem{
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+.head{
+    padding-top: 10px;
+    width:100%;
+   
+    text-align: center;
+    
+    background-color: var(--ion-color-primary);
+    color: white;
+    padding-bottom: 10px;
+}
+.head.ion-text{
+    vertical-align: middle;
 }
 .wasteImg{
     height: 50px;
