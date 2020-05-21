@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AddWasteService } from './../../services/add-waste.service';
 import { Router } from '@angular/router';
 import { FormBuilder, Validators} from '@angular/forms';
 import { DatabaseService } from 'src/app/services/database.service';
@@ -8,28 +7,58 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { ToastController, PickerController,IonDatetime, NavController, IonSlides, PopoverController, IonItemSliding } from '@ionic/angular';
 import { PickerOptions } from '@ionic/core';
 import { ProductapiService } from 'src/app/services/productapi.service';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { WasteHomePage } from '../waste-home/waste-home.page';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { isThisISOWeek } from 'date-fns';
 import { AddPopComponent } from '../../popover/add-pop/add-pop.component';
+import { ReadKeyExpr } from '@angular/compiler';
 @Component({
   selector: 'app-add-manual',
   templateUrl: './add-manual.page.html',
-  styleUrls: ['./add-manual.page.scss']
+  styleUrls: ['./add-manual.page.scss'],
+  providers: [Keyboard]
 })
 export class AddManualPage implements OnInit {
 
   @ViewChild('slides', { static: true }) slider: IonSlides;  
   @ViewChild('itemslide', {static: true}) itemslider: IonItemSliding;
+  plasticOptions = [
+    {text: 'Plastic 1 - PET', value: '1'},
+    {text: 'Plastic 2 - HDPE', value: '2'},
+    {text: 'Plastic 3 - PVC', value: '3'},
+    {text: 'Plastic 4 - LDPE', value: '4'},
+    {text: 'Plastic 5 - PP', value: '5'},
+    {text: 'Plastic 6 - PS', value: '6'},
+    {text: 'Plastic 7 - OTHER', value: '7'}
+  ]
+  glassOptions = [
+    {text: 'Mixed Glass 70 - GL', value: '70'},
+    {text: 'Clear Glass 71 - GL', value: '71'},
+    {text: 'Green Glass 72 - GL', value: '72'},
+    {text: 'Dark Sort Glass 73 - GL', value: '73'}
+  ]
+  metalOptions = [
+    {text: 'Steel 40 - FE', value: '40'},
+    {text: 'Aluminium 41 - ALU', value: '41'}
+  ]
+  paperOptions = [
+    {text: 'Cardboard PAP - 20', value: '20'},
+    {text: 'Paperboard (Magazine) - PAP', value: '21'},
+    {text: 'Paper - PAP', value: '22'}
+  ]
+  otherOptions = [
+    {text: 'Other', value: ''}
+  ]
   segment = 0;  
+  selectEnable = true;
   result = null;
   newAmount: number = 0;
   wasteType: string = "";
   wasteAmount: string = "";
   dateInit: Date = new Date;
   category = 0;
-  testString: string = "empt";
-  testString2: string = "-";
+  pageTitle: string = "Log Some Waste";
   displayDefaultWaste:any[];
   defaultWaste:any[]; 
   quickAdd = this.formBuilder.group({
@@ -44,10 +73,10 @@ export class AddManualPage implements OnInit {
     'wasteNotes' : ['', Validators.maxLength(100)]
   });
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private addWasteService: AddWasteService,
+  constructor(private formBuilder: FormBuilder, private router: Router,
      private databaseService: DatabaseService, private barcodeScanner: BarcodeScanner, private toastController: ToastController,
      private productService: ProductapiService, private pickerCtrl: PickerController, public navCtrl: NavController,
-     private popCtrl: PopoverController) { 
+     private popCtrl: PopoverController, private keyboard: Keyboard) { 
   }
 
   ngOnInit() {
@@ -69,17 +98,17 @@ export class AddManualPage implements OnInit {
         wasteMaterial: "21"
       },
       {
-        wastename: "Green Bottle",
+        wastename: "Green Glass Bottle",
         wasteType: "Glass",
         wasteMaterial: "72"
       },
       {
-        wastename: "Brown Bottle",
+        wastename: "Brown Glass Bottle",
         wasteType: "Glass",
         wasteMaterial: "70"
       },
       {
-        wastename: "Clear Bottle",
+        wastename: "Clear Glass Bottle",
         wasteType: "Glass",
         wasteMaterial: "71"
       },
@@ -104,7 +133,7 @@ export class AddManualPage implements OnInit {
         wasteMaterial: "41"
       },
       {
-        wastename: "Drink Bottle",
+        wastename: "Plastic Bottle",
         wasteType: "Plastics",
         wasteMaterial: "02"
       },
@@ -116,6 +145,7 @@ export class AddManualPage implements OnInit {
     ];
   }
   FilterDefaultData(ev:any){
+    this.category = 0;
     this.initialiseDefaultData();
     const val = ev.target.value;
     console.log("called " + val);
@@ -128,6 +158,7 @@ export class AddManualPage implements OnInit {
       console.log("passed "+ JSON.stringify(this.defaultWaste));
     }
   }
+
   manualBarcode(){
       this.productService.searchData(5010459005018).subscribe(result => {
           let product: any = result
@@ -144,10 +175,12 @@ export class AddManualPage implements OnInit {
 
   }
   scanBarcode(){
+    
     this.barcodeScanner.scan().then(barcodeData => {
       //After scanning a barcode value it will check the database for a matching product
+
       this.result = this.productService.searchData(+barcodeData.text).subscribe(result => {
-        let product: any = result;
+        let product: any = result; 
         if(product['found'] == true){
           //if a matching product is found it will be displayed on the form
 
@@ -155,15 +188,16 @@ export class AddManualPage implements OnInit {
           this.quickAdd.get('wasteName').setValue(product.product.productName);
           this.quickAdd.get('wasteType').setValue(product.product.productType);
           this.quickAdd.get('wasteMaterial').setValue(product.product.material);
-          this.quickAdd.get('wasteNotes').setValue(this.quickAdd.get('wasteNotes').value + "Barcode: " + product.product.barcodeid);
-
+          this.quickAdd.get('wasteNotes').setValue("Barcode: " + product.product.barcodeid);
+          this.category = 2;
+          alert("Item has been found. \n Information has been autofilled into the log page.");
         }
         else{
-          alert(JSON.stringify(product));
+          alert("The product was not found on the system - "+ barcodeData.text);
         }
       })
      }).catch(err => {
-         console.log('Error', err);
+         alert('Error'+ err);
      });
   }
   async presentToast() {
@@ -175,7 +209,9 @@ export class AddManualPage implements OnInit {
     toast.present();
   }
   async presentPopover(ev: any,item: any) {
-
+    if (this.keyboard.isVisible == true){
+      ev = null;
+    }
     const popover = await this.popCtrl.create({
       component: AddPopComponent,
       componentProps: {
@@ -186,23 +222,39 @@ export class AddManualPage implements OnInit {
       translucent: true
     });
     popover.onDidDismiss().then((dataReturned) => {
+      let response = dataReturned['data'].confirmed;
       if(dataReturned !== null){
-          console.log(dataReturned);
+          let item = dataReturned['data'].item;
+          let wasRecycled = dataReturned['data'].wasRecycled;
+          let amount = dataReturned['data'].amount
+          console.log("clicked confirm: "+ JSON.stringify(dataReturned['data']));
+          this.SubmitQuickAdd(item.wastename,item.wasteType, item.wasteMaterial,amount,wasRecycled)
       }
     })
     return await popover.present();
   }
-  handleWasteAmount(amount){
-    this.addWasteService.addWasteTotal(1).then(() => {
-      this.router.navigateByUrl('/tabs/Waste-Home');
-    });
+  SubmitQuickAdd(wastename: string,wasteType:string,wasteMaterial:string,amount: number,recycled:boolean){
+    console.log("In the function");
+    let logDate = new Date();
+    this.databaseService.addWasteLog(wastename,amount,wasteType,wasteMaterial,recycled,"0","Quick Added",logDate)
+    .then(() => {
+      
+      this.presentToast();
+      this.navCtrl.navigateRoot('/tabs/Waste-Home');
+      this.databaseService.loadWasteLogs();
+
+  });
   }
+
   async segmentChanged(event) {
     await this.slider.slideTo(event.detail.value);
 
   }
   async slideChanged() {  
     this.category = await this.slider.getActiveIndex();  
+    switch(this.category){
+      case 1:  
+     }
   }  
   processForm(){
     let logDateTime= new Date;
@@ -233,8 +285,8 @@ export class AddManualPage implements OnInit {
       .then(() => {
         
         this.presentToast();
-        this.navCtrl.navigateRoot('/tabs/Waste-Home')
-
+        this.navCtrl.navigateRoot('/tabs/Waste-Home');
+        this.databaseService.loadWasteLogs();
     });
     
   }
@@ -256,11 +308,11 @@ export class AddManualPage implements OnInit {
         {
           name: 'Type',
           options: [
-            {text: 'Plastic', value: 'plastic'},
-            {text: 'Mixed Paper / Cardboard', value: 'paper'},
-            {text: 'Glass', value: 'glass'},
-            {text: 'Metals', value: 'metals'},
-            {text: 'Others', value: 'others'}
+            {text: 'Plastic', value: 'Plastic'},
+            {text: 'Mixed Paper / Cardboard', value: 'mixedpaper'},
+            {text: 'Glass', value: 'Glass'},
+            {text: 'Metals', value: 'Metals'},
+            {text: 'Others', value: 'Others'}
 
           ]
         }
@@ -268,12 +320,34 @@ export class AddManualPage implements OnInit {
     };
     let picker = await this.pickerCtrl.create(opts);
     picker.present();
+  
     picker.onDidDismiss().then(async data => {
       let col = await picker.getColumn('Type');
       this.quickAdd.get('wasteType').setValue(col.options[col.selectedIndex].value);
+      this.selectEnable = false;
     })
   }
   async showPicker() {
+    let wasteType =  this.quickAdd.get('wasteType').value.toLowerCase();
+    let selection;
+    
+    switch (wasteType) {
+      case "plastic": 
+                selection = this.plasticOptions;
+                break;
+      case "paper":
+                selection = this.paperOptions;
+                break;
+      case "glass":
+                selection = this.glassOptions;
+                break;
+      case "metals":
+                  selection = this.metalOptions;
+                  break;
+      case "others":
+                  selection = this.otherOptions;
+                  break;
+    }
     let opts: PickerOptions = {
       cssClass:'wastePicker',
       buttons: [
@@ -290,17 +364,7 @@ export class AddManualPage implements OnInit {
       columns: [
         {
           name: 'Material',
-          options: [
-            {text: 'Plastic 1: PET', value: 'PETE'},
-            {text: 'Plastic 2: HDPE', value: 'HDPE'},
-            {text: 'Plastic 3: PVC', value: 'PVC'},
-            {text: 'Plastic 4: LDPE', value: 'LDPE'},
-            {text: 'Plastic 5: PP', value: 'PP'},
-            {text: 'Plastic 6: PS', value: 'PS'},
-            {text: 'Plastic 7: OTHER', value: 'OTHER'},
-            {text: 'Plastic 1: PET', value: 'PETE'},
-
-          ]
+          options: selection
         }
       ]
     };

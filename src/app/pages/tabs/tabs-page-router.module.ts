@@ -26,15 +26,6 @@ const routes: Routes = [
       ]
     },
       {
-        path: 'Settings',
-        children: [
-          {
-            path: '',
-            loadChildren: () => import('../settings/settings.module').then( m => m.SettingsPageModule)
-          }
-        ]
-      },
-      {
         path: 'Map',
         children: [
           {

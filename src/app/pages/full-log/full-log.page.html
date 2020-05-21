@@ -2,12 +2,12 @@
 <ion-header>
   <ion-toolbar color="primary">
     <img slot="start" class="headimg" src="../../../assets/imgs/PinClipart.com_garbage-bag-clipart_1656157.png">
-    <ion-title slot="center"> View Your Log  </ion-title>
-    <ion-buttons slot="end">
-      <ion-button slot="end" (click)="loadWasteLogs()">
-        <ion-icon slot="icon-only" name="refresh"></ion-icon>
-      </ion-button>
-    </ion-buttons>   
+    <ion-title > All Waste Logs  </ion-title>
+    
+      <ion-fab-button size="small" slot="end" (click)="loadWasteLogs()">
+        <ion-icon  name="refresh"></ion-icon>
+      </ion-fab-button>
+    
   </ion-toolbar>
 </ion-header>
 
@@ -53,6 +53,6 @@
   </table>
   
  
-<mat-paginator [pageSizeOptions]="[ 5, 7, 10]" showFirstLastButtons></mat-paginator>
+<mat-paginator [pageSizeOptions]="[7, 10]" showFirstLastButtons></mat-paginator>
 
 </ion-content>

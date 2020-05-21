@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { Log, DatabaseService } from 'src/app/services/database.service';
 import { compareAsc, format } from 'date-fns'
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 @Component({
   selector: 'app-log-modal',
   templateUrl: './log-modal.page.html',
@@ -10,7 +11,7 @@ import { compareAsc, format } from 'date-fns'
 export class LogModalPage implements OnInit {
 
   @Input() public log : Log;
-  constructor(private databaseService: DatabaseService ,private modalCtrl: ModalController) { 
+  constructor(private databaseService: DatabaseService ,private modalCtrl: ModalController,private toastController: ToastController) { 
     console.log(this.log);
   }
   formattedD = ""
@@ -31,24 +32,63 @@ export class LogModalPage implements OnInit {
     if(this.log.wasrecycled === false){
       this.cardClass = "cardFailure";
     }
-    if(wasteType === "bottle"){
-      this.headImage = "PlasticBottle.jpg" ;
-    }else
-        if(wasteType.includes("glass")){
-           this.headImage = "wasteGlass.png"
-        }else{
-            if(wasteType.includes("cardboard")){
-              this.headImage = "cardboardWaste.png"
-              }else{
-                this.headImage = "nicaraguaWaste.png"
-              }
-        }
-    
+    this.headImage = "wastePic/MixedBad2.png"
 
+
+    switch(this.log.wastetype.toLocaleLowerCase()){
+      case "plastic": {
+        this.headImage = "wastePic/plasticGood.png" ;
+        if(this.log.wasrecycled == false){
+            this.headImage = "wastePic/PlasticBottleBad.png" ;
+        }
+        break;
+      }
+      case "mixedpaper":{
+        this.headImage = "wastePic/cardboardGood.png"
+        if(this.log.wasrecycled == false){
+          this.headImage = "wastePic/MixedBad.jpg" ;
+        }
+        break;
+      }
+      case "glass":{
+        this.headImage = "wastePic/GlassGood.jpg"
+        if(this.log.wasrecycled == false){
+          this.headImage = "wastePic/GlassBad.png" ;
+        }
+        break;
+      }
+      case "metals":{
+        this.headImage = "wastePic/metalGood.png"
+        if(this.log.wasrecycled == false){
+          if(this.log.wastename.toLocaleLowerCase().includes("can")){
+            this.headImage = "wastePic/MetalCanBad.png" ;
+          }
+          this.headImage = "wastePic/metalBad.png" ;
+        }
+        break;
+      }
+    }
   }
     
-   
-  async closeModal( log){
+  deleteLog() {  
+ 
+    this.databaseService.deleteWasteLog(this.log).then((data => {
+      if(data == true){
+        this.presentToast();
+        this.closeModal();
+      }
+    }))
+
+  }  
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: 'Log has been removed.',
+      duration: 2000,
+      color: "success"
+    });
+    toast.present();
+  }
+  async closeModal(){
       await this.modalCtrl.dismiss();
     }
 }

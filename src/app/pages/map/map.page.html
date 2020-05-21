@@ -1,17 +1,28 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <img slot="start" class="headimg" src="../../../assets/imgs/PinClipart.com_garbage-bag-clipart_1656157.png">
-  </ion-toolbar>
-</ion-header>
 
+
+  <ion-header class ="ion-no-margin ion-no-padding">
+    <ion-toolbar color="primary">
+      <img slot="start" class="headimg" src="../../../assets/imgs/PinClipart.com_garbage-bag-clipart_1656157.png">
+      <ion-title>Recycling Locator</ion-title>
+      <!-- <ion-button  (click) = "findPlace()">Find Recycle Points</ion-button> -->
+      <ion-fab-button size="small" slot="end" (click)="findPlace()">
+        <ion-icon  name="refresh"></ion-icon>
+      </ion-fab-button>
+ 
+    </ion-toolbar>
+  </ion-header>
 <ion-content>
 
-  <ion-item>
-    <ion-title>Local Recycle Points</ion-title>
-  </ion-item>
-  <ion-item><ion-button expand="block" (click) = "showNearby()">SHOW NEARBY</ion-button> <ion-button expand="block" (click) = "findPlace()">SHOW RECYCLE</ion-button></ion-item>
-  <div class = "box">
+  
+
+  <div *ngIf= "internetConnected == true; else elseBlock" class = "box">
     <div #map id="map"></div>
   </div>
+  <ng-template #elseBlock>
+    <ion-item>
+      No Internet Connection Detected
+      
+    </ion-item>
+  </ng-template>
 
 </ion-content>

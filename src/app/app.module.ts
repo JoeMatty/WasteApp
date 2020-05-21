@@ -18,12 +18,11 @@ import { MaterialModule } from './material.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons';
-import { CameraScanService } from 'src/app/services/camera-scan.service';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 import { PopoverController } from '@ionic/angular';
 import { AddPopComponent } from './popover/add-pop/add-pop.component';
-
+import { Network } from '@ionic-native/network/ngx';
 
 library.add(fab);
 
@@ -43,8 +42,8 @@ library.add(fab);
   providers: [
     StatusBar,
     InAppBrowser,
-    CameraScanService,
     PopoverController,
+    Network,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     SQLite,

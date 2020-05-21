@@ -4,6 +4,8 @@ import { Platform } from '@ionic/angular';
 import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 import { Storage } from '@ionic/storage';
 import { LogModalPageRoutingModule } from '../log-modal/log-modal-routing.module';
+import { Network } from '@ionic-native/network/ngx';
+
 
 @Component({
   selector: 'app-map',
@@ -17,16 +19,33 @@ export class MapPage implements OnInit {
   home: google.maps.Marker;
   infoWindow = new google.maps.InfoWindow;
   search = "Recycle centre";
-
-  constructor(private geoLocation: Geolocation, private plt: Platform, private iab:InAppBrowser, private storage: Storage) { }
+  internetConnected = true;
+  currentlatLng;
+  connectSubscription;
+  currentLocation = "1";
+  constructor(private geoLocation: Geolocation, private plt: Platform, private iab:InAppBrowser, private storage: Storage, private network: Network) { }
 
   ngOnInit() {
   }
   ionViewWillEnter() {
+    if (this.plt.is('cordova')) {
+      this.internetConnected = this.checkInternet();
+    }
+    if (this.internetConnected){
       this.loadMap();
+      this.findPlace();
+    }
+  }
+  checkInternet(){
+    if(this.network.type === "NONE"){
+      return false;
+    }
+    else{
+      return true;
+    }
   }
   loadMap(){
-      let latLng = new google.maps.LatLng(53.381130,-1.470085);
+      this.currentlatLng = new google.maps.LatLng(53.3766,-1.4668);
       let styles: google.maps.MapTypeStyle[] = [
           {
             featureType: 'poi',
@@ -37,18 +56,17 @@ export class MapPage implements OnInit {
             ]
           }
       ];
-      this.storage.get('latlng').then((result) => {
-        console.log("storage :"+ result.lat);
-        if(result === undefined){
-            latLng = this.updateUserPostion();
-        }else{
+      // this.storage.get('latlng').then((result) => {
+        this.currentlatLng = this.updateUserPostion();
+      //   console.log("storage :"+ result.lat);
+      //   if(result === undefined){
+      //   }else{
             
-            latLng = result;
-        }
-      })
-      console.log(latLng.lat+" "+latLng.lng)
+      //      // latLng = result;
+      //   }
+      // })
       let mapOptions = {
-          center: latLng,
+          center: this.currentlatLng,
           zoom: 13,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           styles: styles,
@@ -60,37 +78,17 @@ export class MapPage implements OnInit {
      
   }
   updateUserPostion(){
-    let latLng = new google.maps.LatLng(51.5074,0.1278);
-
-      this.geoLocation.getCurrentPosition().then(resp => {
-
+    let latLng = new google.maps.LatLng(53.3766,-1.4668);
+    this.geoLocation.getCurrentPosition().then(resp => {
+      
+      
           latLng = new google.maps.LatLng(resp.coords.latitude,resp.coords.longitude);
+          this.currentLocation = resp.coords.latitude+ " " +resp.coords.longitude;
           this.storage.set('latlng',latLng);
 
-      }).catch((err) => {
-          this.storage.get('latlng').then((result) => {
-              if(result === undefined){
-                this.storage.set('latlng',latLng);
-              }
-          })
-          console.log(err);
       })
       
     return latLng;
-  }
-  loadUserPostion(){
-    this.plt.ready().then(() => {
-        this.geoLocation.getCurrentPosition().then(resp => {
-          const coors = {
-            lat:resp.coords.latitude,
-            lng:resp.coords.longitude
-          }
-            console.log('response: ', resp);
-            this.storage.set('latlng',coors);
-            this.focusMap(coors.lat,coors.lng);
-            this.addMarker(coors.lat,coors.lng,'You are here');
-        })
-    })
   }
   focusMap(lat,long){
     let position = new google.maps.LatLng(lat,long);
@@ -139,7 +137,8 @@ export class MapPage implements OnInit {
   }
   findPlace(){
     const request = {
-      query: this.search
+      query: this.search,
+      location: this.map.getCenter()
     };
     let service = new google.maps.places.PlacesService(this.map);
     service.textSearch(request, (results, status) => {

@@ -16,16 +16,8 @@ const routes: Routes = [
             loadChildren: () => import('../waste-home/waste-home.module').then( m => m.WasteHomePageModule)
           }
         ]
-      },
-      {
-        path: 'Settings',
-        children: [
-          {
-            path: '',
-            loadChildren: () => import('../settings/settings.module').then( m => m.SettingsPageModule)
-          }
-        ]
       }
+
     ]
   },
   {

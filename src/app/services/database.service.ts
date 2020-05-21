@@ -56,7 +56,7 @@ export class DatabaseService {
   }
   openOrCreate(){
     //Creates the database if not existed yet then opens the database
-
+    
     return this.sqlite.create({
       name: 'wasteLog.db',
       location: 'default'
@@ -144,24 +144,21 @@ export class DatabaseService {
   deleteWasteLog(log: Log){
     let serverLog: Log
     
-    // this.getWasteLog(log.id).then(data => {
-    //   serverLog = data;
-    // })
-    // if(serverLog.id == log.id && serverLog.wastename == log.wastename){
+
       return this.db.executeSql('DELETE FROM log WHERE id = ?',[log.id]).then(data =>{
         alert("Record Deleted")
-        return 200
+        this.loadWasteLogs();
+        return true;
+
       }).catch((err) =>{
         alert("Failed to delete")
+        return false;
       });
-    // }
-    // else{
-    //   alert("delete Log doesnt match Database log");
-    //   return "Requested Log id did not match database";
-    // }
+
     
   }
   loadWasteLogs(){
+    
     return this.db.executeSql('SELECT * FROM log', []).then(data =>{
       let result= [];
  

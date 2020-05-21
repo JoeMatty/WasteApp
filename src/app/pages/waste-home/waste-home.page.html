@@ -1,18 +1,19 @@
-<ion-header >
-  <ion-toolbar color="primary">
-    <img slot="start" class="headimg" src="../../../assets/imgs/PinClipart.com_garbage-bag-clipart_1656157.png">
-    <ion-fab-button size="small" slot="end" routerLink="/Add-Manual" routerDirection="forward" >
-      <ion-icon name="add" ></ion-icon>
-    </ion-fab-button>
-  </ion-toolbar>
-</ion-header>
-<ion-content class="ion-padding">
+<ion-content >
+  <ion-header class ="ion-no-margin ion-no-padding">
+    <ion-toolbar color="primary">
+      <img slot="start" class="headimg" src="../../../assets/imgs/PinClipart.com_garbage-bag-clipart_1656157.png">
+      
+      <ion-button size="medium" color="secondary" slot="end" routerLink="/Add-Manual" routerDirection="forward" >
+        <ion-icon name="add" ></ion-icon>
+        Add Waste
+      </ion-button>
+    </ion-toolbar>
+  </ion-header>
   
-    <ion-card>
+    <ion-card class="boxhead">
       <ion-grid class="ion-no-margin ion-no-padding">
           <ion-row size="12" class="summaryHead">     
               <ion-card-subtitle color="#ffffff">Your Waste This Week</ion-card-subtitle>
-
           </ion-row>
           <ion-row class= "ion-no-margin">
              <ion-col class="plasticBox" size="2.4">
@@ -48,19 +49,33 @@
           </ion-col>
       </ion-row>
     </ion-grid>
+    </ion-card>
+  <ion-card>
     <ion-card-header color="#ffffff" class = "ionCHead">  
       <ion-card-subtitle>Compared to the rest of the UK</ion-card-subtitle>
       
     </ion-card-header>
-    <ion-card-content>
+    <ion-grid class="ion-no-margin ion-no-padding">
+      <ion-row>
+        <ion-col class="glassBox" size="{{ recycleSummarySize }}">Recyled</ion-col> 
+        <ion-col class="otherBox" size="{{ nonRecycleSummarySize }}">Landfill</ion-col> 
+      </ion-row>
+      <ion-row class= "ion-no-margin">
+        <ion-col class="glassBox" size="{{ recycleSummarySize }}">{{ totalPerRec }}%</ion-col> 
+        <ion-col class="otherBox" size="{{ nonRecycleSummarySize }}">{{ totalnotRecycled }}%</ion-col> 
+      </ion-row>
+    </ion-grid>
+        <ion-card-content>
       <ion-card-subtitle>Overall Amount recycled: </ion-card-subtitle>
       <ion-grid class="ion-no-margin ion-no-padding dataCol"> 
+        
         <ion-row class="dataCol">
           <ion-col class="ion-text-center" size = "3">
             <span class="helper"></span>
             <img class="displayImg" src="../../../assets/imgs/recycling-symbol.png">
           </ion-col>
           <ion-col class="noTopMargPad" size = "9">
+            
               <ion-row >
                 <ion-col size = "1">
                   

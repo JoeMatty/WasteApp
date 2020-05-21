@@ -102,7 +102,9 @@
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "google-maps-mock.js"
+            ],
             "assets": [
               {
                 "glob": "favicon.ico",

@@ -21,7 +21,7 @@ export class FullLogPage implements OnInit {
     id : 1,
     wastename: "Coca Cola",
     wasteamount: 1,
-    wastetype: "Bottle",
+    wastetype: "Plastic",
     wastematerial: "PET",
     wasrecycled: false,
     necessary: "a",
@@ -33,7 +33,7 @@ export class FullLogPage implements OnInit {
     id : 2,
     wastename: "Shop Bag",
     wasteamount: 1,
-    wastetype: "Bag",
+    wastetype: "Plastic",
     wastematerial: "HDPE",
     wasrecycled: true,
     necessary: "m",
@@ -42,44 +42,44 @@ export class FullLogPage implements OnInit {
     formattedDate: "12-12-2013"
   },{
     id : 3,
-    wastename: "Coca Cola",
-    wasteamount: 1,
-    wastetype: "Bottle",
-    wastematerial: "PET",
+    wastename: "Tin Can",
+    wasteamount: 8,
+    wastetype: "Metals",
+    wastematerial: "41",
     wasrecycled: false,
     necessary: "a",
-    wasteNotes: "Was bought on the weekend at the beach",
+    wasteNotes: "Bought from supermarket in multipack",
     logdate: new Date("2013-12-09 17:22:00.000"),
     formattedDate: "01-01-2014"
   },
   {
     id : 4,
-    wastename: "Shop Bag",
+    wastename: "Magazine",
     wasteamount: 1,
-    wastetype: "Bag",
+    wastetype: "MixedPaper",
     wastematerial: "HDPE",
-    wasrecycled: true,
+    wasrecycled: false,
     necessary: "m",
     wasteNotes: "Needed a bag, will be reused",
     logdate: new Date("2017-12-09T12:22:00.000Z"),
     formattedDate: "09-08-2013"
   },{
     id : 5,
-    wastename: "Coca Cola",
+    wastename: "Can of Beer",
     wasteamount: 1,
-    wastetype: "Bottle",
-    wastematerial: "PET",
-    wasrecycled: false,
+    wastetype: "Metals",
+    wastematerial: "41",
+    wasrecycled: true,
     necessary: "a",
-    wasteNotes: "Was bought on the weekend at the beach",
+    wasteNotes: "Bought for the birthday party",
     logdate: new Date("2013-12-09 17:22:00.000"),
     formattedDate: "21-02-2014"
   },
   {
     id : 6,
-    wastename: "Shop Bag",
+    wastename: "Carton",
     wasteamount: 1,
-    wastetype: "Bag",
+    wastetype: "mixedpaper",
     wastematerial: "HDPE",
     wasrecycled: true,
     necessary: "m",
@@ -145,23 +145,7 @@ export class FullLogPage implements OnInit {
       event.target.complete();  
     }, 500);  
   }  
-  deleteLog(log) {  
- 
-    this.databaseService.deleteWasteLog(log).then((data => {
-      if(data == 200){
-        this.presentToast();
-        this.loadWasteLogs()
-      }
-    }))
-  }  
-  async presentToast() {
-    const toast = await this.toastController.create({
-      message: 'Log has been removed.',
-      duration: 2000,
-      color: "success"
-    });
-    toast.present();
-  }
+  
   loadWasteLogs() {
     
     this.databaseService.loadWasteLogs().then(res => {

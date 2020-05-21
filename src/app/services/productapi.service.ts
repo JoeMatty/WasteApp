@@ -15,4 +15,5 @@ export class ProductapiService {
   searchData(barcodeid: Number){
     return this.http.get(`${this.url}/${barcodeid}`)
   }
+
 }

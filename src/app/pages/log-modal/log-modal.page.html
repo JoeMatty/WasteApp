@@ -7,25 +7,27 @@
           <ion-icon slot="icon-only" name="close"></ion-icon>
         </ion-button>
         
-          <ion-button (click)="databaseService.deleteWasteLog(log)" color = "danger" >
+          <ion-button (click)="deleteLog()" color = "danger" >
             <ion-icon  name="trash"></ion-icon>
           </ion-button>
    
       </ion-card-header>
-    <img src="../../../assets/imgs/{{headImage}}">
+    <img src="/assets/imgs/{{headImage}}">
     <ion-card-header >
       <ion-card-subtitle>{{log.wastetype}}&nbsp;&nbsp;&nbsp;&nbsp; {{formattedD}} - {{formattedT}}</ion-card-subtitle>
       <ion-card-title>{{log.wastename}}</ion-card-title>
     
     </ion-card-header>
-  
+
     <ion-card-content>
-        <ion-text>Material Material: </ion-text>{{log.wastematerial}}
+      <ion-text>Waste Material: </ion-text>{{log.wastetype}}
+        <br>
+        <ion-label>Material Number: </ion-label>{{log.wastematerial}}
+        <br>
         <br>
         <ion-label>Amount: </ion-label>{{formattedAmount}}
         <br>
-        <ion-label>Material: </ion-label>{{log.wasteMaterial}}
-        <br>
+      
         <ion-label>Notes: </ion-label>{{log.wasteNotes}}
         <br>
         

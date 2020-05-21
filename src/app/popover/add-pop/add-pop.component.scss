@@ -1,10 +1,21 @@
 .add-box{
-    
-    padding: 1px;
-   
+    padding: 3px;
     background: #ffffff;
-    border-radius: 5px;
+    border-radius: 0px;
     border: 2px solid var(--ion-color-primary);
+}
+ion-icon {
+  font-size: 32px;
+}
+.option{
+  padding-top: 10px;
+  padding-left: 6px;
+  padding-bottom: 8px;
+  font-size: 17px;
+  
+}
+.lblSize{
+    font-size: 12px;
 }
 .summaryHead{
     text-align: center;
